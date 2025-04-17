@@ -8,6 +8,7 @@ import com.zwb.mvvm_mall.R.*
 import com.zwb.mvvm_mall.base.view.BaseActivity
 import com.zwb.mvvm_mall.common.utils.Constant
 import com.zwb.mvvm_mall.databinding.ActivityMainBinding
+import com.zwb.mvvm_mall.ui.test.SettingFragment
 
 //import com.zwb.mvvm_mall.ui.cart.view.CartFragment
 //import com.zwb.mvvm_mall.ui.classify.view.ClassifyFragment
@@ -102,6 +103,11 @@ class MainActivity  : BaseActivity() {
                 //Constant.CART -> fragment = CartFragment.newInstance()
                 //Constant.MINE -> fragment = MineFragment.newInstance()
             }
+
+            if (fragment == null) {
+                fragment = SettingFragment.newInstance("", "")
+            }
+
             mFragmentSparseArray.put(index, fragment)
         }
         return fragment!!
