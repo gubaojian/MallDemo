@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.zwb.mvvm_mall.bean.BannerResponse
 import com.zwb.mvvm_mall.common.utils.StatusBarUtil
+import com.zwb.mvvm_mall.databinding.FragmentHomeBinding
 import com.zwb.mvvm_mall.databinding.FragmentSettingBinding
 import com.zwb.mvvm_mall.base.view.BaseVMFragment as BaseVMFragment
 
@@ -27,7 +28,7 @@ class HomeFragment : BaseVMFragment<HomeFragmentViewModel>() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
 
-    private lateinit var binding: FragmentSettingBinding;
+    private lateinit var binding: FragmentHomeBinding;
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +39,7 @@ class HomeFragment : BaseVMFragment<HomeFragmentViewModel>() {
     }
 
     override fun createContentViewByBinding(inflater: LayoutInflater, container: ViewGroup?): View {
-        binding = FragmentSettingBinding.inflate(layoutInflater, container, false)
+        binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
         val view = binding.root
         return view
     }
