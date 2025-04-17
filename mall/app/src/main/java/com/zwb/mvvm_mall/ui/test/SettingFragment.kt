@@ -1,11 +1,16 @@
 package com.zwb.mvvm_mall.ui.test
 
 import android.os.Bundle
+import android.renderscript.ScriptGroup.Binding
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.zwb.mvvm_mall.R
+import com.zwb.mvvm_mall.base.view.BaseFragment
+import com.zwb.mvvm_mall.databinding.ActivityMainBinding
+import com.zwb.mvvm_mall.databinding.FragmentSettingBinding
+import com.zwb.mvvm_mall.base.view.BaseVMFragment as BaseVMFragment
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -17,10 +22,13 @@ private const val ARG_PARAM2 = "param2"
  * Use the [SettingFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class SettingFragment : Fragment() {
+class SettingFragment : BaseVMFragment<SettingViewModel>() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    private lateinit var binding: FragmentSettingBinding;
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,13 +38,13 @@ class SettingFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_setting, container, false)
+    override fun createContentViewByBinding(inflater: LayoutInflater, container: ViewGroup?): View {
+        binding = FragmentSettingBinding.inflate(layoutInflater, container, false)
+        val view = binding.root
+        return view
     }
+
+
 
     companion object {
         /**

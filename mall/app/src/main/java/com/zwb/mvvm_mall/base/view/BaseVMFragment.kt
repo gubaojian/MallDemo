@@ -27,8 +27,11 @@ abstract class BaseVMFragment<VM : BaseViewModel<*>> : BaseFragment(),BaseView {
     private var loadService: LoadService<*>? = null
     private var loadKeys:MutableList<String> = ArrayList()
 
+
+    abstract fun createContentViewByBinding(inflater: LayoutInflater, container: ViewGroup?):View;
+
     override fun setContentView(inflater: LayoutInflater, container: ViewGroup?): View {
-        val rootView = inflater.inflate(layoutId, container, false)
+        val rootView = createContentViewByBinding(inflater, container)
         mViewModel = getActivityViewModelProvider(mActivity).get(CommonUtils.getClass(this))
         return rootView
     }

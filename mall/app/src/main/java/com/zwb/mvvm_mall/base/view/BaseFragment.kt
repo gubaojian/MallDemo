@@ -2,14 +2,18 @@ package com.zwb.mvvm_mall.base.view
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.zwb.lib_base.utils.EventBusRegister
+import com.zwb.lib_base.utils.EventBusUtils
 import com.zwb.mvvm_mall.MyApplication
 import com.zwb.mvvm_mall.base.vm.SharedViewModel
+import kotlin.system.measureTimeMillis
 
 abstract class BaseFragment: Fragment() {
 
@@ -18,7 +22,7 @@ abstract class BaseFragment: Fragment() {
     private var mFragmentProvider: ViewModelProvider? = null
     private var mActivityProvider: ViewModelProvider? = null
     lateinit var mContext: Context
-    abstract var layoutId:Int
+
 
     open fun initView(){}
 
@@ -48,6 +52,11 @@ abstract class BaseFragment: Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val eventBusTimes = measureTimeMillis {
+            // 注册EventBus
+            if (javaClass.isAnnotationPresent(EventBusRegister::class.java)) EventBusUtils.register(this)
+        }
+        Log.d("$javaClass==fragment", "init: EventBus : $eventBusTimes ms")
         initView()
         initData()
     }
@@ -68,5 +77,12 @@ abstract class BaseFragment: Fragment() {
             mActivityProvider = ViewModelProvider(activity)
         }
         return mActivityProvider as ViewModelProvider
+    }
+
+    override fun onDestroy() {
+        if (javaClass.isAnnotationPresent(EventBusRegister::class.java)) EventBusUtils.unRegister(
+            this
+        )
+        super.onDestroy()
     }
 }
