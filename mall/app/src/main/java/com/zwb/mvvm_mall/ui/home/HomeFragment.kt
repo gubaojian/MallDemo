@@ -1,4 +1,4 @@
-package com.zwb.mvvm_mall.ui.test
+package com.zwb.mvvm_mall.ui.home
 
 import android.os.Bundle
 import android.os.Handler
@@ -23,7 +23,7 @@ private const val ARG_PARAM1 = "param1"
  * Use the [HomeFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class SettingFragment : BaseVMFragment<SettingViewModel>() {
+class HomeFragment : BaseVMFragment<HomeFragmentViewModel>() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
 
@@ -107,7 +107,7 @@ class SettingFragment : BaseVMFragment<SettingViewModel>() {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String) =
-            SettingFragment().apply {
+            HomeFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                 }

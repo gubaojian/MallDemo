@@ -11,6 +11,7 @@ import com.zwb.mvvm_mall.common.utils.Constant
 import com.zwb.mvvm_mall.common.utils.StatusBarUtil
 import com.zwb.mvvm_mall.databinding.ActivityMainBinding
 import com.zwb.mvvm_mall.ui.test.SettingFragment
+import com.zwb.mvvm_mall.ui.home.HomeFragment
 
 //import com.zwb.mvvm_mall.ui.cart.view.CartFragment
 //import com.zwb.mvvm_mall.ui.classify.view.ClassifyFragment
@@ -105,8 +106,7 @@ class MainActivity  : BaseActivity() {
         var fragment: Fragment? = mFragmentSparseArray.get(index)
         if (fragment == null) {
             when (index) {
-                Constant.HOME -> fragment = SettingFragment.newInstance("1")
-
+                Constant.HOME -> fragment = HomeFragment.newInstance("home1")
                 Constant.CLASSIFY -> fragment = SettingFragment.newInstance("2")
                 Constant.CART -> fragment = SettingFragment.newInstance("3")
                 Constant.MINE -> fragment = SettingFragment.newInstance("4")

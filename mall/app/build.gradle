@@ -98,6 +98,8 @@ dependencies {
 
     implementation 'com.github.bumptech.glide:glide:4.16.0'
 
+
+
     implementation project(path: ":lib_base")
 
 
@@ -110,4 +112,7 @@ dependencies {
     implementation  'io.github.scwang90:refresh-header-two-level:3.0.0-alpha'   //二级刷新头
     implementation  'io.github.scwang90:refresh-footer-ball:3.0.0-alpha'        //球脉冲加载
     implementation  'io.github.scwang90:refresh-footer-classics:3.0.0-alpha'
+
+    implementation 'io.github.youth5201314:banner:2.2.3'
+
 }
