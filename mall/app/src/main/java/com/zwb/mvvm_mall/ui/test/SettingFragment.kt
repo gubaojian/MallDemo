@@ -1,6 +1,7 @@
 package com.zwb.mvvm_mall.ui.test
 
 import android.os.Bundle
+import android.os.Handler
 import android.renderscript.ScriptGroup.Binding
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.zwb.mvvm_mall.R
 import com.zwb.mvvm_mall.base.view.BaseFragment
+import com.zwb.mvvm_mall.common.utils.StatusBarUtil
 import com.zwb.mvvm_mall.databinding.ActivityMainBinding
 import com.zwb.mvvm_mall.databinding.FragmentSettingBinding
 import com.zwb.mvvm_mall.base.view.BaseVMFragment as BaseVMFragment
@@ -44,6 +46,18 @@ class SettingFragment : BaseVMFragment<SettingViewModel>() {
         return view
     }
 
+
+    override fun initView() {
+        super.initView()
+    }
+
+    override fun initData() {
+        mViewModel.loadBannerCo()
+        /**
+        Handler().postDelayed({
+            mViewModel.loadSeckillGoodsData()
+        }, 2000)*/
+    }
 
 
     companion object {
