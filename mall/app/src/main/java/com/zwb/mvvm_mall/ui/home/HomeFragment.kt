@@ -8,11 +8,11 @@ import androidx.lifecycle.Observer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.zwb.mvvm_mall.bean.BannerResponse
 import com.zwb.mvvm_mall.common.utils.StatusBarUtil
 import com.zwb.mvvm_mall.databinding.FragmentHomeBinding
-import com.zwb.mvvm_mall.databinding.FragmentSettingBinding
 import com.zwb.mvvm_mall.base.view.BaseVMFragment as BaseVMFragment
 
 // TODO: Rename parameter arguments, choose names that match
@@ -29,6 +29,9 @@ class HomeFragment : BaseVMFragment<HomeFragmentViewModel>() {
     private var param1: String? = null
 
     private lateinit var binding: FragmentHomeBinding;
+
+    private var data: MutableList<HomeItemEntity> = mutableListOf()
+    private lateinit var listAdapter: HomeListAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,6 +52,8 @@ class HomeFragment : BaseVMFragment<HomeFragmentViewModel>() {
         super.initView()
         StatusBarUtil.setMargin(activity, binding.content)
 
+        listAdapter = HomeListAdapter(mActivity, data)
+
         binding.refreshLayout.setEnableRefresh(true)
         binding.refreshLayout.setRefreshHeader(ClassicsHeader(getContext()))
         binding.refreshLayout.setOnRefreshListener {
@@ -59,6 +64,9 @@ class HomeFragment : BaseVMFragment<HomeFragmentViewModel>() {
                 2000
             )
         }
+
+        binding.mainRecyclerView.layoutManager = LinearLayoutManager(activity)
+        binding.mainRecyclerView.adapter = listAdapter
     }
 
     override fun initData() {
@@ -88,6 +96,12 @@ class HomeFragment : BaseVMFragment<HomeFragmentViewModel>() {
     }
 
     private fun setBannerData(list: List<BannerResponse>) {
+        if (data.isEmpty() || (data.get(0).type != 1)) {
+            data.add(0, HomeItemEntity(list, 1))
+        } else {
+            data.set(0, HomeItemEntity(list, 1))
+        }
+        listAdapter.notifyDataSetChanged();
         binding.text.setText("" + list.toString() + " \n " +   param1 )
         //mHeaderView.mBanner.adapter = BannerImageAdapter(list)
         //mHeaderView.mBanner.addBannerLifecycleObserver(this)
