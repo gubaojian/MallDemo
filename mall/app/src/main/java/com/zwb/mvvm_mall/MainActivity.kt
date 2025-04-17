@@ -1,5 +1,6 @@
 package com.zwb.mvvm_mall
 
+import android.os.Bundle
 import android.util.SparseArray
 import android.view.MenuItem
 import android.view.Window
@@ -7,6 +8,7 @@ import androidx.fragment.app.Fragment
 import com.zwb.mvvm_mall.R.*
 import com.zwb.mvvm_mall.base.view.BaseActivity
 import com.zwb.mvvm_mall.common.utils.Constant
+import com.zwb.mvvm_mall.common.utils.StatusBarUtil
 import com.zwb.mvvm_mall.databinding.ActivityMainBinding
 import com.zwb.mvvm_mall.ui.test.SettingFragment
 
@@ -24,6 +26,11 @@ class MainActivity  : BaseActivity() {
     private var mLastFragment: Fragment? = null
     private lateinit var binding: ActivityMainBinding;
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        StatusBarUtil.immersive(this)
+        super.onCreate(savedInstanceState)
+    }
 
     override val layoutId  = layout.activity_main
     override fun setContentView() {

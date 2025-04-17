@@ -20,7 +20,7 @@
     <string name="cart_all_money">合计：¥ %1$s</string>
     <string name="cart_coupon_money">优惠券：¥ %1$s &#160;&#8201;优惠明细</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment">Hello blank fragmentHello blank fragmentHello blank fragmentHello blank fragment</string>
 
 
 </resources>
