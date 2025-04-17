@@ -105,14 +105,15 @@ class MainActivity  : BaseActivity() {
         var fragment: Fragment? = mFragmentSparseArray.get(index)
         if (fragment == null) {
             when (index) {
-                //Constant.HOME -> fragment = HomeFragment.newInstance()
-                //Constant.CLASSIFY -> fragment = ClassifyFragment.newInstance()
-                //Constant.CART -> fragment = CartFragment.newInstance()
-                //Constant.MINE -> fragment = MineFragment.newInstance()
+                Constant.HOME -> fragment = SettingFragment.newInstance("1")
+
+                Constant.CLASSIFY -> fragment = SettingFragment.newInstance("2")
+                Constant.CART -> fragment = SettingFragment.newInstance("3")
+                Constant.MINE -> fragment = SettingFragment.newInstance("4")
             }
 
             if (fragment == null) {
-                fragment = SettingFragment.newInstance("", "")
+                fragment = SettingFragment.newInstance("1")
             }
 
             mFragmentSparseArray.put(index, fragment)

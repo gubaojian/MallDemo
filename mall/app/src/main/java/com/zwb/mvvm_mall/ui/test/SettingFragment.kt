@@ -21,7 +21,6 @@ import com.zwb.mvvm_mall.base.view.BaseVMFragment as BaseVMFragment
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -31,7 +30,6 @@ private const val ARG_PARAM2 = "param2"
 class SettingFragment : BaseVMFragment<SettingViewModel>() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
-    private var param2: String? = null
 
     private lateinit var binding: FragmentSettingBinding;
 
@@ -40,7 +38,6 @@ class SettingFragment : BaseVMFragment<SettingViewModel>() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
         }
     }
 
@@ -54,6 +51,7 @@ class SettingFragment : BaseVMFragment<SettingViewModel>() {
     override fun initView() {
         super.initView()
         StatusBarUtil.setMargin(activity, binding.content)
+
     }
 
     override fun initData() {
@@ -83,7 +81,7 @@ class SettingFragment : BaseVMFragment<SettingViewModel>() {
     }
 
     private fun setBannerData(list: List<BannerResponse>) {
-        binding.text.setText(list.toString())
+        binding.text.setText("" + list.toString() + " \n " +   param1 )
         //mHeaderView.mBanner.adapter = BannerImageAdapter(list)
         //mHeaderView.mBanner.addBannerLifecycleObserver(this)
         //mHeaderView.mBanner.indicator = CircleIndicator(activity)
@@ -102,11 +100,10 @@ class SettingFragment : BaseVMFragment<SettingViewModel>() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(param1: String) =
             SettingFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
                 }
             }
     }
