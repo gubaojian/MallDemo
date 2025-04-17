@@ -98,10 +98,11 @@ class HomeFragment : BaseVMFragment<HomeFragmentViewModel>() {
     private fun setBannerData(list: List<BannerResponse>) {
         if (data.isEmpty() || (data.get(0).type != 1)) {
             data.add(0, HomeItemEntity(list, 1))
+            listAdapter.notifyItemInserted(0)
         } else {
             data.set(0, HomeItemEntity(list, 1))
+            listAdapter.notifyItemChanged(0)
         }
-        listAdapter.notifyDataSetChanged();
         binding.text.setText("" + list.toString() + " \n " +   param1 )
         //mHeaderView.mBanner.adapter = BannerImageAdapter(list)
         //mHeaderView.mBanner.addBannerLifecycleObserver(this)
