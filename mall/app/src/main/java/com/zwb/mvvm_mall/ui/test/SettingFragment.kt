@@ -2,12 +2,14 @@ package com.zwb.mvvm_mall.ui.test
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.renderscript.ScriptGroup.Binding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.scwang.smart.refresh.header.ClassicsHeader
 import com.youth.banner.indicator.CircleIndicator
 import com.zwb.mvvm_mall.R
 import com.zwb.mvvm_mall.base.view.BaseFragment
@@ -52,6 +54,16 @@ class SettingFragment : BaseVMFragment<SettingViewModel>() {
         super.initView()
         StatusBarUtil.setMargin(activity, binding.content)
 
+        binding.refreshLayout.setEnableRefresh(true)
+        binding.refreshLayout.setRefreshHeader(ClassicsHeader(getContext()))
+        binding.refreshLayout.setOnRefreshListener {
+            Handler(Looper.getMainLooper()).postDelayed(
+                {
+                    binding.refreshLayout.finishRefresh()
+                },
+                2000
+            )
+        }
     }
 
     override fun initData() {
