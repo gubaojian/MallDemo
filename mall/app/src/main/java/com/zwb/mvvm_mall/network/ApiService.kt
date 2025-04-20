@@ -4,6 +4,9 @@ import com.zwb.mvvm_mall.bean.*
 import com.zwb.mvvm_mall.common.utils.Constant.PROJECT
 import retrofit2.http.GET
 
+/***
+ * 数据url：https://mockapi.eolink.com/JiPqtefd9325e3466dc720a8c0ad3364c4f791e227debcd/banner/json
+ * */
 interface ApiService {
 
 
