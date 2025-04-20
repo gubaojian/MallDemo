@@ -8,9 +8,11 @@ import androidx.lifecycle.Observer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.ui.unit.Constraints
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.zwb.mvvm_mall.bean.BannerResponse
+import com.zwb.mvvm_mall.common.utils.Constant
 import com.zwb.mvvm_mall.common.utils.StatusBarUtil
 import com.zwb.mvvm_mall.databinding.FragmentHomeBinding
 import com.zwb.mvvm_mall.base.view.BaseVMFragment as BaseVMFragment
@@ -67,10 +69,14 @@ class HomeFragment : BaseVMFragment<HomeFragmentViewModel>() {
 
         binding.mainRecyclerView.layoutManager = LinearLayoutManager(activity)
         binding.mainRecyclerView.adapter = listAdapter
+
+        registerDefaultLoad(binding.refreshLayout, Constant.COMMON_KEY)
     }
 
     override fun initData() {
+        super.initData()
         mViewModel.loadBannerCo()
+
         /**
         Handler().postDelayed({
             mViewModel.loadSeckillGoodsData()
@@ -80,7 +86,10 @@ class HomeFragment : BaseVMFragment<HomeFragmentViewModel>() {
 
     override fun initDataObserver() {
         mViewModel.mBannerData.observe(viewLifecycleOwner, Observer {
+            showSuccess(Constant.COMMON_KEY)
             setBannerData(it)
+            //showLoading("dddd")
+            //showError("dddd", "dddd")
         })
 
         val nameObserver = Observer<String> { it ->

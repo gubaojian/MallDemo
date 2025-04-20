@@ -41,4 +41,19 @@ interface ApiService {
 
     */
 
+    companion object {
+        const val HOST_URL = "https://dev.zwb.com"
+        const val Login_Url = HOST_URL +"/mbff/login"
+
+        //send code
+        const val VALID_CODE_URL = "${HOST_URL}/mbff/validateSmsByForgot"
+
+        const val CHANGE_PASSWORD_URL = HOST_URL +"/mbff/passwordByForgot"
+
+        const val User_Info_Url = HOST_URL +"/mbff/social/user/info"
+
+        const val ALITOKEN_URL = HOST_URL + "/mbff/getAliFusionAuthToken"
+        const val FusionLogin_URL = HOST_URL +"/mbff/verifyAliFusionAuthToken"
+    }
+
 }

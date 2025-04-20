@@ -8,8 +8,12 @@ import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
+import com.kingja.loadsir.core.LoadSir
 import com.zwb.lib_base.app.ActivityLifecycleCallbacksImpl
 import com.zwb.lib_base.app.LoadModuleProxy
+import com.zwb.mvvm_mall.common.callback.EmptyCallBack
+import com.zwb.mvvm_mall.common.callback.ErrorCallBack
+import com.zwb.mvvm_mall.common.callback.LoadingCallBack
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -59,6 +63,8 @@ class MyApplication: Application(), ViewModelStoreOwner {
         // 全局监听 Activity 生命周期
         registerActivityLifecycleCallbacks(ActivityLifecycleCallbacksImpl())
 
+        //config loadSir
+        configLoadSir()
         // 策略初始化第三方依赖
         initDepends()
     }
@@ -109,6 +115,14 @@ class MyApplication: Application(), ViewModelStoreOwner {
     private fun checkApplication(activity: Activity): Application {
         return activity.application
             ?: throw IllegalStateException("Your activity/fragment is not yet attached to " + "Application. You can't request ViewModel before onCreate call.")
+    }
+
+    private fun configLoadSir() {
+        LoadSir.beginBuilder()
+            .addCallback(LoadingCallBack())
+            .addCallback(ErrorCallBack())
+            .addCallback(EmptyCallBack())
+            .commit()
     }
 
 }
