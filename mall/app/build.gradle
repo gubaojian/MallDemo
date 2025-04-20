@@ -96,10 +96,12 @@ dependencies {
 
     implementation("org.greenrobot:eventbus:3.3.1")
 
+    //https://github.com/Tencent/MMKV
     implementation 'com.tencent:mmkv-static:1.2.9'
 
-
+    //https://github.com/youth5201314/banner
     implementation 'io.github.youth5201314:banner:2.2.3'
+
 
     implementation 'com.github.bumptech.glide:glide:4.16.0'
 
@@ -108,7 +110,7 @@ dependencies {
     implementation project(path: ":lib_base")
 
 
-    //https://github.com/scwang90/SmartRefreshLayout 
+    //https://github.com/scwang90/SmartRefreshLayout
     implementation  'io.github.scwang90:refresh-drawable-path:3.0.0-alpha'      //矢量路径
     implementation  'io.github.scwang90:refresh-layout-kernel:3.0.0-alpha'      //核心必须依赖
     implementation  'io.github.scwang90:refresh-header-classics:3.0.0-alpha'    //经典刷新头
@@ -119,8 +121,6 @@ dependencies {
     implementation  'io.github.scwang90:refresh-footer-ball:3.0.0-alpha'        //球脉冲加载
     implementation  'io.github.scwang90:refresh-footer-classics:3.0.0-alpha'
 
-    //https://github.com/youth5201314/banner
-    implementation 'io.github.youth5201314:banner:2.2.3'
 
 
     //https://github.com/Blankj/AndroidUtilCode/blob/master/lib/utilcode/README-CN.md
