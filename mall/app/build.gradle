@@ -108,6 +108,7 @@ dependencies {
     implementation project(path: ":lib_base")
 
 
+    //https://github.com/scwang90/SmartRefreshLayout 
     implementation  'io.github.scwang90:refresh-drawable-path:3.0.0-alpha'      //矢量路径
     implementation  'io.github.scwang90:refresh-layout-kernel:3.0.0-alpha'      //核心必须依赖
     implementation  'io.github.scwang90:refresh-header-classics:3.0.0-alpha'    //经典刷新头
@@ -118,6 +119,12 @@ dependencies {
     implementation  'io.github.scwang90:refresh-footer-ball:3.0.0-alpha'        //球脉冲加载
     implementation  'io.github.scwang90:refresh-footer-classics:3.0.0-alpha'
 
+    //https://github.com/youth5201314/banner
     implementation 'io.github.youth5201314:banner:2.2.3'
+
+
+    //https://github.com/Blankj/AndroidUtilCode/blob/master/lib/utilcode/README-CN.md
+    implementation 'com.blankj:utilcodex:1.31.1'
+
 
 }

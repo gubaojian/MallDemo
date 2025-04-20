@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import com.kingja.loadsir.core.LoadSir
+import com.tencent.mmkv.MMKV
 import com.zwb.lib_base.app.ActivityLifecycleCallbacksImpl
 import com.zwb.lib_base.app.LoadModuleProxy
 import com.zwb.mvvm_mall.common.callback.EmptyCallBack
@@ -65,6 +66,8 @@ class MyApplication: Application(), ViewModelStoreOwner {
 
         //config loadSir
         configLoadSir()
+
+        configMMKV()
         // 策略初始化第三方依赖
         initDepends()
     }
@@ -125,4 +128,7 @@ class MyApplication: Application(), ViewModelStoreOwner {
             .commit()
     }
 
+    private fun configMMKV() {
+        MMKV.initialize(this);
+    }
 }
