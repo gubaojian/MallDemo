@@ -1,0 +1,145 @@
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+}
+
+android {
+    namespace 'com.zhongpin.app'
+    compileSdk 34
+
+
+
+    defaultConfig {
+        applicationId "com.zhongpin.app"
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    /**
+     * https://developer.android.com/topic/libraries/view-binding?hl=zh-cn#java
+     * */
+    buildFeatures {
+        compose true
+        viewBinding true
+        buildConfig  true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.5.1'
+    }
+    packaging {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+}
+
+dependencies {
+
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.lifecycle.runtime.ktx
+    implementation libs.androidx.activity.compose
+    implementation libs.androidx.appcompat
+    implementation platform(libs.androidx.compose.bom)
+    implementation libs.androidx.ui
+    implementation libs.androidx.ui.graphics
+    implementation libs.androidx.ui.tooling.preview
+    implementation libs.androidx.constraintlayout
+    implementation libs.androidx.lifecycle.livedata.ktx
+    implementation libs.androidx.lifecycle.viewmodel.ktx
+    implementation libs.androidx.swiperefreshlayout
+    testImplementation libs.junit
+    androidTestImplementation libs.androidx.junit
+    androidTestImplementation libs.androidx.espresso.core
+    androidTestImplementation platform(libs.androidx.compose.bom)
+    androidTestImplementation libs.androidx.ui.test.junit4
+    debugImplementation libs.androidx.ui.tooling
+    debugImplementation libs.androidx.ui.test.manifest
+
+
+    implementation("com.google.android.material:material:1.2.0")
+
+    //https://github.com/KingJA/LoadSir
+    implementation("com.kingja.loadsir:loadsir:1.3.8")
+
+    //https://github.com/CymChad/BaseRecyclerViewAdapterHelper
+    //https://github.com/CymChad/BaseRecyclerViewAdapterHelper/wiki
+    implementation("io.github.cymchad:BaseRecyclerViewAdapterHelper4:4.1.4")
+
+
+    //网络请求
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    //https://github.com/greenrobot/EventBus
+    implementation("org.greenrobot:eventbus:3.3.1")
+
+    //https://github.com/Tencent/MMKV
+    implementation 'com.tencent:mmkv-static:1.2.9'
+
+    //https://github.com/youth5201314/banner
+    implementation 'io.github.youth5201314:banner:2.2.3'
+
+
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+
+
+
+    //https://github.com/scwang90/SmartRefreshLayout
+    implementation  'io.github.scwang90:refresh-drawable-path:3.0.0-alpha'      //矢量路径
+    implementation  'io.github.scwang90:refresh-layout-kernel:3.0.0-alpha'      //核心必须依赖
+    implementation  'io.github.scwang90:refresh-header-classics:3.0.0-alpha'    //经典刷新头
+    implementation  'io.github.scwang90:refresh-header-radar:3.0.0-alpha'       //雷达刷新头
+    implementation  'io.github.scwang90:refresh-header-falsify:3.0.0-alpha'     //虚拟刷新头
+    implementation  'io.github.scwang90:refresh-header-material:3.0.0-alpha'    //谷歌刷新头
+    implementation  'io.github.scwang90:refresh-header-two-level:3.0.0-alpha'   //二级刷新头
+    implementation  'io.github.scwang90:refresh-footer-ball:3.0.0-alpha'        //球脉冲加载
+    implementation  'io.github.scwang90:refresh-footer-classics:3.0.0-alpha'
+
+
+
+    //https://github.com/Blankj/AndroidUtilCode/blob/master/lib/utilcode/README-CN.md
+    implementation 'com.blankj:utilcodex:1.31.1'
+
+
+    // PictureSelector basic (Necessary)
+    implementation 'io.github.lucksiege:pictureselector:v3.11.2'
+
+    // image compress library (Not necessary)
+    implementation 'io.github.lucksiege:compress:v3.11.2'
+
+    // uCrop library (Not necessary)
+    implementation 'io.github.lucksiege:ucrop:v3.11.2'
+
+    // simple camerax library (Not necessary)
+    implementation 'io.github.lucksiege:camerax:v3.11.2'
+
+    // https://github.com/gzu-liyujiang/AndroidPicker
+    implementation 'com.github.gzu-liyujiang.AndroidPicker:Common:4.1.14'
+    implementation 'com.github.gzu-liyujiang.AndroidPicker:AddressPicker:4.1.14'
+
+    //https://github.com/Curzibn/Luban
+    //implementation 'top.zibin:Luban:1.1.8'
+}
