@@ -35,4 +35,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "mall"
 include ':app'
-include ':lib_base'
