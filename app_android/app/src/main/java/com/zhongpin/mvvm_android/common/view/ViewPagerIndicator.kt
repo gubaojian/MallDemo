@@ -40,8 +40,8 @@ class ViewPagerIndicator @JvmOverloads constructor(
 
         val attr =
             context.theme.obtainStyledAttributes(attrs, R.styleable.indicator, defStyleAttr, 0)
-        normalColor = attr.getColor(R.styleable.indicator_normalColor, normalColor)
-        selectedColor = attr.getColor(R.styleable.indicator_selectedColor, selectedColor)
+        normalColor = attr.getColor(R.styleable.indicator_indicatorNormalColor, normalColor)
+        selectedColor = attr.getColor(R.styleable.indicator_indicatorSelectedColor, selectedColor)
         attr.recycle()
     }
 

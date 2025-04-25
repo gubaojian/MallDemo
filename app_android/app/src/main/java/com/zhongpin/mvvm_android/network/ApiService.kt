@@ -1,9 +1,15 @@
 package com.zhongpin.mvvm_android.network
 
+import com.google.gson.JsonElement
 import com.zhongpin.mvvm_android.bean.*
+import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
+import retrofit2.http.Query
 
 /***
  * 数据url：https://mockapi.eolink.com/JiPqtefd9325e3466dc720a8c0ad3364c4f791e227debcd/banner/json
@@ -34,6 +40,32 @@ interface ApiService {
 
     @POST(RESET_PASSWORD)
     suspend fun resetPassword(@Body parameters:HashMap<String,Any>): BaseResponse<Boolean>
+
+
+    @Multipart
+    @POST(IDENTIFY_ID_CARD)
+    suspend fun identifyIdCard(@Part file: MultipartBody.Part): BaseResponse<IdCardInfoResponse>
+
+
+    @Multipart
+    @POST(UPLOAD_IMAGE)
+    suspend fun uploadImage(@Part file: MultipartBody.Part): BaseResponse<String>
+
+
+    @POST(SUBMIT_USER_INFO_AUTH)
+    suspend fun submitUserInfoAuth(@Body parameters:HashMap<String,Any>): BaseResponse<Boolean>
+
+    @POST(SUBMIT_ENT_INFO_AUTH)
+    suspend fun submitEntInfoAuth(@Body parameters:HashMap<String,Any>): BaseResponse<Boolean>
+
+
+    @GET(SELECT_ADDRESS_POI_INFO)
+    suspend fun getLntLngInfo(@Query("address") address: String): BaseResponse<String>
+
+
+    @Multipart
+    @POST(ENT_INFO_IDENTIFY)
+    suspend fun identifyEntCard(@Part file: MultipartBody.Part): BaseResponse<EntInfoResponse>
 
 
     /**
@@ -75,6 +107,19 @@ interface ApiService {
         const val SEND_VERIFY_CODE = "/mini/sendCode"
         const val RESET_PASSWORD = "/mini/resetPassword"
         const val USER_INFO = "/mini/selectUserInfo"
+        const val IDENTIFY_ID_CARD ="/mini/identifyIdCard"
+
+        const val UPLOAD_IMAGE  ="/mini/uploadImage"
+
+        const val SUBMIT_USER_INFO_AUTH = "/mini/submitUserInfoAuth"
+
+        //提交企业认证
+        const val SUBMIT_ENT_INFO_AUTH = "/mini/submitEntInfoAuth"
+
+        //获取经纬度
+        const val SELECT_ADDRESS_POI_INFO = "/mini/selectExactInfo"
+
+        const val ENT_INFO_IDENTIFY = "/mini/identify"
 
 
         //send code

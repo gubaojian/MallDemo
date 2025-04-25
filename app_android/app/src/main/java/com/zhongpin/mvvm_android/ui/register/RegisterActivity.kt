@@ -23,6 +23,7 @@ import com.zhongpin.mvvm_android.bean.LoginEvent
 import com.zhongpin.mvvm_android.common.utils.Constant
 import com.zhongpin.mvvm_android.common.utils.StatusBarUtil
 import com.zhongpin.mvvm_android.ui.login.LoginActivity
+import com.zhongpin.mvvm_android.ui.verify.person.PersonVerifyActivity
 import com.zhongpin.mvvm_android.ui.web.WebActivity
 import org.greenrobot.eventbus.EventBus
 
@@ -201,6 +202,7 @@ class RegisterActivity : BaseVMActivity<RegisterViewModel>() {
 
                     Toast.makeText(applicationContext,"登录成功", Toast.LENGTH_LONG).show()
                     EventBus.getDefault().post(LoginEvent(true))
+                    goVerifyActivity()
                     finish()
                 }
             } else {
@@ -211,6 +213,11 @@ class RegisterActivity : BaseVMActivity<RegisterViewModel>() {
                 finish()
             }
         }
+    }
+
+    private fun goVerifyActivity() {
+        val intent = Intent(this@RegisterActivity, PersonVerifyActivity::class.java)
+        startActivity(intent)
     }
 
 }

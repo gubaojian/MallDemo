@@ -14,6 +14,7 @@ import com.zhongpin.app.databinding.FragmentMineBinding
 import com.zhongpin.mvvm_android.bean.UserInfoResponse
 import com.zhongpin.mvvm_android.common.utils.StatusBarUtil
 import com.zhongpin.mvvm_android.ui.login.LoginActivity
+import com.zhongpin.mvvm_android.ui.verify.company.CompanyVerifyActivity
 import com.zhongpin.mvvm_android.ui.verify.person.PersonVerifyActivity
 import com.zhongpin.mvvm_android.base.view.BaseVMFragment as BaseVMFragment
 
@@ -70,6 +71,12 @@ class MineFragment : BaseVMFragment<MineViewModel>() {
             val intent = Intent(activity, PersonVerifyActivity::class.java)
             startActivity(intent)
         }
+
+        binding.entVerify.setOnClickListener {
+            val intent = Intent(activity, CompanyVerifyActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     override fun initData() {

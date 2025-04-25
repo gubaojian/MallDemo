@@ -18,11 +18,35 @@ class CompanyVerifyViewModel  : BaseViewModel<CompanyVerifyRepository>() {
 
 
     fun sendVerifyCode(mobile:String) : MutableLiveData<BaseResponse<Boolean>> {
-        val mLoginData: MutableLiveData<BaseResponse<Boolean>> = MutableLiveData()
+        val mLiveData: MutableLiveData<BaseResponse<Boolean>> = MutableLiveData()
         initiateRequest({
-            mLoginData.value = mRepository.sendVerifyCode(mobile);
+            mLiveData.value = mRepository.sendVerifyCode(mobile);
         }, loadState)
-        return mLoginData
+        return mLiveData
+    }
+
+    fun submitEntInfoAuth(parameters:HashMap<String,Any>) : MutableLiveData<BaseResponse<Boolean>> {
+        val mLiveData: MutableLiveData<BaseResponse<Boolean>> = MutableLiveData()
+        initiateRequest({
+            mLiveData.value = mRepository.submitEntInfoAuth(parameters);
+        }, loadState)
+        return mLiveData
+    }
+
+    fun getLntLngInfo(address:String) : MutableLiveData<BaseResponse<String>> {
+        val mLiveData: MutableLiveData<BaseResponse<String>> = MutableLiveData()
+        initiateRequest({
+            mLiveData.value = mRepository.getLntLngInfo(address);
+        }, loadState)
+        return mLiveData
+    }
+
+    fun uploadImage(filePath:String) : MutableLiveData<BaseResponse<String>> {
+        val mLiveData: MutableLiveData<BaseResponse<String>> = MutableLiveData()
+        initiateRequest({
+            mLiveData.value = mRepository.uploadImage(filePath);
+        }, loadState)
+        return mLiveData
     }
 
 }

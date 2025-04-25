@@ -1,6 +1,7 @@
 package com.zhongpin.mvvm_android.ui.verify.person
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
@@ -38,8 +40,18 @@ class PersonVerifyActivity : BaseVMActivity<PersonVerifyViewModel>() {
     private lateinit var mBinding: ActivityPersonVerifyBinding;
     private lateinit var mLoadingDialog: LoadingDialog
 
+    private var idCardFrontImagePath:String? = null;
+    private var idCardBackImagePath:String? = null;
+    private var idCardFrontImageUrl:String? = null;
+    private var idCardBackImageUrl:String? = null;
+    private var selectCompanyType:Int = -1;
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        StatusBarUtil.immersive(this)
+        //android:windowSoftInputMode="adjustResize"
+        // 键盘view整体上移，暂时不用沉浸式导航栏
+        //StatusBarUtil.immersive(this)
         super.onCreate(savedInstanceState)
     }
 
@@ -52,23 +64,61 @@ class PersonVerifyActivity : BaseVMActivity<PersonVerifyViewModel>() {
 
     override fun initView() {
         super.initView()
-        StatusBarUtil.setMargin(this, mBinding.content)
+        //StatusBarUtil.setMargin(this, mBinding.content)
         mLoadingDialog = LoadingDialog(this, false)
         mBinding.ivBack.setOnClickListener { finish() }
         mBinding.btnNext.setOnClickListener {
-            //setAndCheck()
-            val intent = Intent(this@PersonVerifyActivity, CompanyVerifyActivity::class.java)
-            startActivity(intent)
+            checkAndSubmit()
         }
 
         mBinding.ivRightTitle.setOnClickListener {
             finish()
         }
 
-        mBinding.idCardFront.setOnClickListener {
+        mBinding.idCardFrontContainer.setOnClickListener {
             PictureSelector.create(this@PersonVerifyActivity)
                 .openGallery(SelectMimeType.ofImage())
                 .setImageEngine(GlideEngine.createGlideEngine())
+                .setCompressEngine(object: CompressFileEngine {
+                    override fun onStartCompress(
+                        context: Context?,
+                        source: java.util.ArrayList<Uri>?,
+                        call: OnKeyValueResultCallbackListener?
+                    ) {
+                        if (source == null || source.isEmpty()) {
+                            return;
+                        }
+                        Luban.with(this@PersonVerifyActivity)
+                            .load(source)
+                            .ignoreBy(100).setCompressListener(
+                                object : OnNewCompressListener {
+                                    override fun onStart() {
+
+                                    }
+
+                                    override fun onSuccess(source: String?, compressFile: File?) {
+                                        if (call != null) {
+                                            if (compressFile != null) {
+                                                LogUtils.d(
+                                                    "PersonVerifyActivity",
+                                                    "PersonVerifyActivity compressFile " + source + " compress " + compressFile?.absolutePath
+                                                            + " length " + compressFile!!.length() / 1024
+                                                )
+                                            }
+                                            call.onCallback(source, compressFile?.absolutePath);
+                                        }
+                                    }
+
+                                    override fun onError(source: String?, e: Throwable?) {
+                                        if (call != null) {
+                                            call.onCallback(source, null);
+                                        }
+                                    }
+                                }
+                            ).launch();
+                    }
+
+                })
                 .setMaxSelectNum(1)
                 .forResult(object : OnResultCallbackListener<LocalMedia?> {
                     override fun onResult(result: ArrayList<LocalMedia?>) {
@@ -83,7 +133,7 @@ class PersonVerifyActivity : BaseVMActivity<PersonVerifyViewModel>() {
                             //content://
                             Log.e("photo", "photo selector " + localMedia.path + " cut path " + localMedia.cutPath)
                         }
-                        val filePath = localMedia.realPath ?: "";
+                        val filePath = localMedia.compressPath ?: localMedia.realPath;
                         if (filePath.isNullOrEmpty()) {
                             return
                         }
@@ -95,7 +145,7 @@ class PersonVerifyActivity : BaseVMActivity<PersonVerifyViewModel>() {
                 })
         }
 
-        mBinding.idCardBack.setOnClickListener {
+        mBinding.idCardBackContainer.setOnClickListener {
             PictureSelector.create(this@PersonVerifyActivity)
                 .openGallery(SelectMimeType.ofImage())
                 .setImageEngine(GlideEngine.createGlideEngine())
@@ -165,6 +215,26 @@ class PersonVerifyActivity : BaseVMActivity<PersonVerifyViewModel>() {
                 })
         }
 
+        val companyTypes = arrayOf("造纸厂", "纸板厂", "纸箱厂", "耗材厂商", "纸箱使用单位")
+        mBinding.chooseCompanyTypeContainer.setOnClickListener {
+            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+            builder.setTitle("选择单位类别")
+
+            // 设置对话框内容为单选列表项，默认选中第一项（索引为0）
+            builder.setSingleChoiceItems(companyTypes, selectCompanyType, DialogInterface.OnClickListener { dialog, which -> // 当用户选择一个单位类别时，更新文本视图显示所选单位
+                mBinding.chooseCompanyTypeText.text = companyTypes[which]
+                selectCompanyType = which
+                dialog.dismiss()
+            })
+            // 添加取消按钮
+            builder.setNegativeButton("取消", DialogInterface.OnClickListener { dialog, which -> dialog.dismiss() })
+
+
+            // 显示对话框
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+        }
+
     }
 
     override fun onDestroy() {
@@ -172,23 +242,34 @@ class PersonVerifyActivity : BaseVMActivity<PersonVerifyViewModel>() {
     }
 
     fun  uploadFrontImage(filePath: String) {
-
-        Glide.with(this@PersonVerifyActivity)
-            .load(Uri.fromFile(File(filePath)))
-            .placeholder(mBinding.idCardFront.drawable)
-            .into(mBinding.idCardFront)
+        mViewModel.identifyIdCardInfo(filePath).observe(this) { outerIt ->
+            if (outerIt.success) {
+                idCardFrontImagePath = filePath
+                outerIt.data?.let {
+                    mBinding.editUserName.setText(it.name ?:"")
+                    mBinding.editIdCardNo.setText(it.idCard ?: "")
+                    mBinding.editAddress.setText(it.address ?: "")
+                }
+                //update info
+                mBinding.idCardFrontText.visibility = View.GONE
+                Glide.with(this@PersonVerifyActivity)
+                    .load(Uri.fromFile(File(filePath)))
+                    .placeholder(mBinding.idCardFront.drawable)
+                    .into(mBinding.idCardFront)
+            } else {
+                idCardFrontImagePath = null
+                Toast.makeText(applicationContext,"身份证信息识别失败," + outerIt.msg, Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     fun  uploadBackImage(filePath: String) {
-
+        idCardBackImagePath = filePath
+        mBinding.idCardBackText.visibility = View.GONE
         Glide.with(this@PersonVerifyActivity)
             .load(Uri.fromFile(File(filePath)))
             .placeholder(mBinding.idCardBack.drawable)
             .into(mBinding.idCardBack)
-    }
-
-    fun setAndCheck(){
-        realSetPassword()
     }
 
     /**
@@ -205,9 +286,73 @@ class PersonVerifyActivity : BaseVMActivity<PersonVerifyViewModel>() {
         mLoadingDialog.dismissDialog()
     }
 
-    fun realSetPassword(){
-
+    fun checkAndSubmit(){
+        if (TextUtils.isEmpty(idCardFrontImagePath) || TextUtils.isEmpty(idCardBackImagePath)) {
+            Toast.makeText(applicationContext,"请上传身份证正反面", Toast.LENGTH_LONG).show()
+            return;
+        }
+        if (TextUtils.isEmpty(mBinding.editUserName.text.trim().toString())) {
+            Toast.makeText(applicationContext,"请输入姓名", Toast.LENGTH_LONG).show()
+            return;
+        }
+        if (TextUtils.isEmpty(mBinding.editIdCardNo.text.trim().toString())) {
+            Toast.makeText(applicationContext,"请输入身份证号", Toast.LENGTH_LONG).show()
+            return;
+        }
+        if (TextUtils.isEmpty(mBinding.editAddress.text.trim().toString())) {
+            Toast.makeText(applicationContext,"请输入联系地址", Toast.LENGTH_LONG).show()
+            return;
+        }
+        if (selectCompanyType < 0) {
+            Toast.makeText(applicationContext,"请选择单位类型", Toast.LENGTH_LONG).show()
+            return;
+        }
+        showLoadingDialog()
+        mViewModel.uploadImage(idCardFrontImagePath!!).observe(this) {
+            if (it.success) {
+                idCardFrontImageUrl = it.data ?: ""
+                uploadBackImage()
+            } else {
+                dismissLoadingDialog()
+                Toast.makeText(applicationContext,"图片上传失败 " + it.msg, Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
+    fun uploadBackImage() {
+        mViewModel.uploadImage(idCardBackImagePath!!).observe(this) {
+            if (it.success) {
+                idCardBackImageUrl = it.data ?: ""
+                submitFormInfo()
+            } else {
+                dismissLoadingDialog()
+                Toast.makeText(applicationContext,"图片上传失败 " + it.msg, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    fun submitFormInfo() {
+        val parameter:HashMap<String,Any> = hashMapOf()
+        parameter["address"] = mBinding.editAddress.text.trim().toString()
+        parameter["idCard"] = mBinding.editIdCardNo.text.trim().toString()
+        parameter["name"] = mBinding.editUserName.text.trim().toString()
+        parameter["entType"] = selectCompanyType
+        parameter["idCardLeft"] = idCardFrontImageUrl ?: ""
+        parameter["idCardRight"] = idCardBackImageUrl ?:""
+        mViewModel.submitUserInfoAuth(parameter).observe(this) {
+            dismissLoadingDialog()
+            if (it.success) {
+                goCompanyVerify()
+                finish()
+            } else {
+                Toast.makeText(applicationContext,"提交失败 " + it.msg, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    fun goCompanyVerify() {
+        val intent = Intent(this@PersonVerifyActivity, CompanyVerifyActivity::class.java)
+        startActivity(intent)
+    }
 
 }

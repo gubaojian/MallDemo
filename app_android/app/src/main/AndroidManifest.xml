@@ -48,6 +48,7 @@
         <activity
             android:name="com.zhongpin.mvvm_android.ui.verify.person.PersonVerifyActivity"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustResize"
             android:exported="false"
             android:theme="@style/Theme.Verify" />
         <activity

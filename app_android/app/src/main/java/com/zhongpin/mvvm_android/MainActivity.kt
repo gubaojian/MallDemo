@@ -3,9 +3,14 @@ package com.zhongpin.mvvm_android
 import android.os.Bundle
 import android.util.SparseArray
 import android.view.MenuItem
+import android.view.View
 import android.view.Window
 import androidx.fragment.app.Fragment
+import com.zhongpin.app.R
 import com.zhongpin.app.R.*
+import com.kongzue.tabbar.Tab
+import com.kongzue.tabbar.TabBarView
+import com.kongzue.tabbar.interfaces.OnTabChangeListener
 import com.zhongpin.mvvm_android.base.view.BaseActivity
 import com.zhongpin.mvvm_android.common.utils.Constant
 import com.zhongpin.mvvm_android.common.utils.StatusBarUtil
@@ -45,6 +50,24 @@ class MainActivity  : BaseActivity() {
         super.initView()
         switchFragment(Constant.HOME)
         initBottomNavigation()
+        initTabs()
+    }
+
+    private fun initTabs() {
+        val tabs:ArrayList<Tab>  = ArrayList();
+        tabs.add(Tab(this@MainActivity, "首页", R.mipmap.tab_home).setFocusIcon(this, R.mipmap.tab_home_current));            //使用 setFocusIcon(bitmap/drawable/resId) 来添加选中时的第二套图标
+        tabs.add(Tab(this@MainActivity, "订单", R.mipmap.tab_order).setFocusIcon(this, R.mipmap.tab_order_current));            //使用 setFocusIcon(bitmap/drawable/resId) 来添加选中时的第二套图标
+        tabs.add(Tab(this@MainActivity, "通知", R.mipmap.tab_notify).setFocusIcon(this, R.mipmap.tab_notify_current));            //使用 setFocusIcon(bitmap/drawable/resId) 来添加选中时的第二套图标
+        tabs.add(Tab(this@MainActivity, "我的", R.mipmap.tab_my).setFocusIcon(this, R.mipmap.tab_my_current));            //使用 setFocusIcon(bitmap/drawable/resId) 来添加选中时的第二套图标
+        binding.tabs.setTab(tabs)
+
+        binding.tabs.setOnTabChangeListener(
+            object: OnTabChangeListener {
+                override fun onTabChanged(v: View?, index: Int): Boolean {switchFragment(index)
+                  return false;
+                }
+            }
+        )
     }
 
     private fun initBottomNavigation() {

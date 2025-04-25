@@ -89,8 +89,7 @@ class FindSetPwdActivity : BaseVMActivity<FindSetPwdViewModel>() {
                     Toast.makeText(applicationContext,"设置成功，请登录", Toast.LENGTH_LONG).show()
                     goLoginActivity()
                 } else {
-                    Toast.makeText(applicationContext,"设置失败," + it.msg, Toast.LENGTH_LONG).show()
-                    finish()
+                    Toast.makeText(applicationContext,"设置失败, " + it.msg, Toast.LENGTH_LONG).show()
                 }
             }
         } else {

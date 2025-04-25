@@ -10,6 +10,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.UnsupportedEncodingException
 import java.net.URLDecoder
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -41,8 +42,10 @@ class RetrofitFactory private constructor() {
     }
 
     private fun initOkHttpClient(): OkHttpClient {
-
         return OkHttpClient.Builder()
+            .readTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
             .addInterceptor(initLoggingIntercept())
             .addInterceptor(initCookieIntercept())
             .addInterceptor(initLoginIntercept())
@@ -52,9 +55,11 @@ class RetrofitFactory private constructor() {
     private fun initLoggingIntercept(): Interceptor {
         return HttpLoggingInterceptor { message ->
             try {
-                val text: String = URLDecoder.decode(message, "utf-8")
-                LogUtils.e("OKHttp-----", text)
-            } catch (e: UnsupportedEncodingException) {
+                if (message.length < 1024*10) {
+                    val text: String = URLDecoder.decode(message, "utf-8")
+                    LogUtils.e("OKHttp-----", text)
+                }
+            } catch (e: Exception) {
                 e.printStackTrace()
                 LogUtils.e("OKHttp-----", message)
             }

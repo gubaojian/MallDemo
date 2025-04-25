@@ -1,8 +1,10 @@
 package com.zhongpin.mvvm_android.ui.verify.company
 
+import android.content.Context
 import android.content.DialogInterface
 import android.net.Uri
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,14 +20,18 @@ import com.github.gzuliyujiang.wheelpicker.entity.CountyEntity
 import com.github.gzuliyujiang.wheelpicker.entity.ProvinceEntity
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
+import com.luck.picture.lib.engine.CompressFileEngine
 import com.luck.picture.lib.entity.LocalMedia
+import com.luck.picture.lib.interfaces.OnKeyValueResultCallbackListener
 import com.luck.picture.lib.interfaces.OnResultCallbackListener
 import com.zhongpin.app.BuildConfig
 import com.zhongpin.app.databinding.ActivityCompanyVerifyBinding
+import com.zhongpin.lib_base.utils.LogUtils
 import com.zhongpin.lib_base.view.LoadingDialog
 import com.zhongpin.mvvm_android.base.view.BaseVMActivity
-import com.zhongpin.mvvm_android.common.utils.StatusBarUtil
 import com.zhongpin.mvvm_android.photo.selector.GlideEngine
+import top.zibin.luban.Luban
+import top.zibin.luban.OnNewCompressListener
 import java.io.File
 
 
@@ -34,7 +40,9 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
 
     private lateinit var mBinding: ActivityCompanyVerifyBinding;
     private lateinit var mLoadingDialog: LoadingDialog
-    private var selectCompanyType:Int = 0;
+
+    private var yingYeZhiZhaoPath:String? = null;
+    private var yingYeZhiZhaoUrl:String? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //android:windowSoftInputMode="adjustResize"
@@ -56,31 +64,52 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
         mLoadingDialog = LoadingDialog(this, false)
         mBinding.ivBack.setOnClickListener { finish() }
 
-        val companyTypes = arrayOf("造纸厂", "纸板厂", "纸箱厂", "耗材厂商", "纸箱使用单位")
-        mBinding.chooseCompanyTypeContainer.setOnClickListener {
-            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-            builder.setTitle("选择单位类别")
-
-            // 设置对话框内容为单选列表项，默认选中第一项（索引为0）
-            builder.setSingleChoiceItems(companyTypes, selectCompanyType, DialogInterface.OnClickListener { dialog, which -> // 当用户选择一个单位类别时，更新文本视图显示所选单位
-                    mBinding.chooseCompanyTypeText.text = companyTypes[which]
-                    selectCompanyType = which
-                    dialog.dismiss()
-                })
-            // 添加取消按钮
-            builder.setNegativeButton("取消",DialogInterface.OnClickListener { dialog, which -> dialog.dismiss() })
 
 
-            // 显示对话框
-            val dialog: AlertDialog = builder.create()
-            dialog.show()
-        }
-
-
-        mBinding.yingYeZhiZhao.setOnClickListener {
+        mBinding.yingYeZhiZhaoContainer.setOnClickListener {
             PictureSelector.create(this@CompanyVerifyActivity)
                 .openGallery(SelectMimeType.ofImage())
                 .setImageEngine(GlideEngine.createGlideEngine())
+                .setCompressEngine(object: CompressFileEngine {
+                    override fun onStartCompress(
+                        context: Context?,
+                        source: java.util.ArrayList<Uri>?,
+                        call: OnKeyValueResultCallbackListener?
+                    ) {
+                        if (source == null || source.isEmpty()) {
+                            return;
+                        }
+                        Luban.with(this@CompanyVerifyActivity)
+                            .load(source)
+                            .ignoreBy(100).setCompressListener(
+                                object : OnNewCompressListener {
+                                    override fun onStart() {
+
+                                    }
+
+                                    override fun onSuccess(source: String?, compressFile: File?) {
+                                        if (call != null) {
+                                            if (compressFile != null) {
+                                                LogUtils.d(
+                                                    "PersonVerifyActivity",
+                                                    "PersonVerifyActivity compressFile " + source + " compress " + compressFile?.absolutePath
+                                                            + " length " + compressFile!!.length() / 1024
+                                                )
+                                            }
+                                            call.onCallback(source, compressFile?.absolutePath);
+                                        }
+                                    }
+
+                                    override fun onError(source: String?, e: Throwable?) {
+                                        if (call != null) {
+                                            call.onCallback(source, null);
+                                        }
+                                    }
+                                }
+                            ).launch();
+                    }
+
+                })
                 .setMaxSelectNum(1)
                 .forResult(object : OnResultCallbackListener<LocalMedia?> {
                     override fun onResult(result: ArrayList<LocalMedia?>) {
@@ -95,11 +124,11 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
                             //content://
                             Log.e("photo", "photo selector " + localMedia.path + " cut path " + localMedia.cutPath)
                         }
-                        val filePath = localMedia.realPath ?: "";
+                        val filePath = localMedia.compressPath ?: localMedia.realPath;
                         if (filePath.isNullOrEmpty()) {
                             return
                         }
-                        uploadFrontImage(filePath)
+                        uploadEntImage(filePath)
                     }
 
                     override fun onCancel() {
@@ -123,12 +152,21 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
             picker.show()
         }
 
+        mBinding.autoChooseJingweidu.setOnClickListener {
+            val address = mBinding.chooseShouhuoAreaText.text.trim().toString() +  mBinding.editShouHuoDetail.text.trim().toString()
+            mViewModel.getLntLngInfo(address).observe(this@CompanyVerifyActivity) {
+                if (it.success) {
+                    mBinding.chooseJingweiduEditText.setText("" + (it.data ?: ""))
+                }
+            }
+        }
+
         mBinding.btnLater.setOnClickListener {
             finish()
         }
 
         mBinding.btnSubmit.setOnClickListener {
-            setAndCheck()
+            checkAndSubmit()
         }
 
     }
@@ -137,7 +175,9 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
         super.onDestroy()
     }
 
-    fun  uploadFrontImage(filePath: String) {
+    fun  uploadEntImage(filePath: String) {
+        yingYeZhiZhaoPath = filePath
+        mBinding.yingYeZhiZhaoText.visibility = View.GONE
         Glide.with(this@CompanyVerifyActivity)
             .load(Uri.fromFile(File(filePath)))
             .placeholder(mBinding.yingYeZhiZhao.drawable)
@@ -145,8 +185,39 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
     }
 
 
-    fun setAndCheck(){
-        realSetPassword()
+    fun checkAndSubmit(){
+        if (TextUtils.isEmpty(mBinding.editCompanyname.text.trim().toString())) {
+            Toast.makeText(applicationContext,"请输入公司全称", Toast.LENGTH_LONG).show()
+            return
+        }
+        if (TextUtils.isEmpty(mBinding.editCompanyAddress.text.trim().toString())) {
+            Toast.makeText(applicationContext,"请输入公司注册地址", Toast.LENGTH_LONG).show()
+            return
+        }
+        if (TextUtils.isEmpty(mBinding.editXinYongCode.text.trim().toString())) {
+            Toast.makeText(applicationContext,"请输入统一社会信用代码", Toast.LENGTH_LONG).show()
+            return
+        }
+        if (TextUtils.isEmpty(mBinding.editFaren.text.trim().toString())) {
+            Toast.makeText(applicationContext,"请输入法定代表人", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        if (TextUtils.isEmpty(mBinding.editPhone.text.trim().toString())) {
+            Toast.makeText(applicationContext,"请输入联系电话", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        if (TextUtils.isEmpty(mBinding.editNaShuiCode.text.trim().toString())) {
+            Toast.makeText(applicationContext,"请输入纳税人识别号", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        if (TextUtils.isEmpty(yingYeZhiZhaoPath)) {
+            Toast.makeText(applicationContext,"请上传营业执照", Toast.LENGTH_LONG).show()
+            return
+        }
+        uploadYingYeZhiZhao()
     }
 
     /**
@@ -163,8 +234,73 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
         mLoadingDialog.dismissDialog()
     }
 
-    fun realSetPassword(){
+    //https://space-64stfp.w.eolink.com/home/api-studio/inside/p346wIBec8b27b4efe594eed716ffa6a4764f833feb25fd/api/3148316/detail/55650603?spaceKey=space-64stfp
+    fun uploadYingYeZhiZhao(){
+        showLoadingDialog()
+        mViewModel.uploadImage(yingYeZhiZhaoPath!!).observe(this) {
+            if (it.success) {
+                yingYeZhiZhaoUrl = it.data ?: ""
+                submitFormInfo()
+            } else {
+                dismissLoadingDialog()
+                Toast.makeText(applicationContext,"图片上传失败 " + it.msg, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
 
+    //https://space-64stfp.w.eolink.com/home/api-studio/inside/p346wIBec8b27b4efe594eed716ffa6a4764f833feb25fd/api/3148316/detail/55650603?spaceKey=space-64stfp
+    fun submitFormInfo(){
+        val parameter:HashMap<String,Any> = hashMapOf()
+        parameter["name"] = mBinding.editCompanyname.text.trim().toString()
+        parameter["address"] = mBinding.editCompanyAddress.text.trim().toString()
+        parameter["unite"] = mBinding.editXinYongCode.text.trim().toString()
+        parameter["legal"] = mBinding.editFaren.text.trim().toString()
+        parameter["mobile"] = mBinding.editPhone.text.trim().toString()
+        parameter["identify"] = mBinding.editNaShuiCode.text.trim().toString()
+        parameter["license"] = yingYeZhiZhaoUrl ?: ""
+        parameter["bankAccount"] = mBinding.editBankCode.text.trim().toString()
+        parameter["bankName"] = mBinding.editKaiHuHang.text.trim().toString()
+
+        val receiveAddress:HashMap<String,Any?> = hashMapOf()
+        receiveAddress["name"] = mBinding.editShouHuoName.text.trim().toString()
+        receiveAddress["mobile"] = mBinding.editShouHuoShouJi.text.trim().toString()
+        if (!mBinding.chooseShouhuoAreaText.text.toString().contains("请选择")) {
+            receiveAddress["address"] = mBinding.chooseShouhuoAreaText.text.trim()
+                .toString() + mBinding.editShouHuoDetail.text.trim().toString()
+        }
+        receiveAddress["abbr"] = mBinding.editShouHuoShort.text.trim().toString()
+
+        receiveAddress["latitude"] = ""
+        receiveAddress["longitude"] = ""
+        receiveAddress["province"] = mProvince?.name
+        receiveAddress["city"] = mCity?.name
+        receiveAddress["region"] = mCounty?.name
+
+        parameter["receiveAddressList"] = arrayOf(receiveAddress);
+
+        mViewModel.submitEntInfoAuth(parameter).observe(this) {
+            dismissLoadingDialog()
+            if (it.success) {
+                showTipDialog()
+            } else {
+                Toast.makeText(applicationContext,"提交失败 " + it.msg, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    fun showTipDialog() {
+        val builder = AlertDialog.Builder(this@CompanyVerifyActivity)
+        builder.setTitle("信息提交成功")
+        builder.setMessage("您填写的个人实名认证信息已提交，\n" +
+                "请等待人工审核。\n" +
+                "如需认证企业，可在“我的-我的企业-添加企业”中重新申请认证。")
+        builder.setPositiveButton("我知道了", object: DialogInterface.OnClickListener{
+            override fun onClick(dialog: DialogInterface?, which: Int) {
+                finish()
+            }
+
+        })
+        builder.show()
     }
 
     override fun onAddressPicked(
@@ -184,8 +320,15 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
             city.name,
             county.name
         )
+        mProvince = province;
+        mCity = city
+        mCounty = county
         mBinding.chooseShouhuoAreaText.text = address
     }
+
+    private var mProvince: ProvinceEntity? = null;
+    private var mCity: CityEntity? = null;
+    private var mCounty: CountyEntity? = null;
 
 
 }

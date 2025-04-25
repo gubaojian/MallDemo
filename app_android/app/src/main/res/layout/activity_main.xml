@@ -1,17 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
-    <LinearLayout
+    android:orientation="vertical">
+    <FrameLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical"
-        android:layout_above="@+id/nav_view"
         />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.kongzue.tabbar.TabBarView
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            app:focusColor="#333333"
+            app:iconPadding="4dp"
+            app:normalColor="#999999"
+            android:background="#fff"
+            app:noDyeing="true"
+            app:paddingNavigationBar="false"
+            app:tabClickBackground="ripple"
+            app:tabPaddingVertical="3dp"
+            app:textSize="14dp" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="#999999"
+            android:elevation="1px"/>
+    </FrameLayout>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
         android:layout_width="match_parent"
@@ -20,8 +43,7 @@
         android:layout_marginEnd="0dp"
         app:labelVisibilityMode="labeled"
         android:background="?android:attr/windowBackground"
-        android:layout_alignParentBottom="true"
         app:menu="@menu/bottom_nav_menu"
-        android:theme="@style/navTabBar"/>
-
-</RelativeLayout>
+        android:theme="@style/navTabBar"
+        android:visibility="gone"/>
+</LinearLayout>

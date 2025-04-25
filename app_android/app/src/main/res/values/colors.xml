@@ -30,4 +30,10 @@
     <color name="E0C675">#E0C675</color>
     <color name="E5D4B2">#E5D4B2</color>
     <color name="FEFBBE">#FEFBBE</color>
+
+    <color name="colorEmpty">#00000000</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorGray">#e9e9e9</color>
+
+
 </resources>
