@@ -29,6 +29,8 @@ import com.zhongpin.app.databinding.ActivityCompanyVerifyBinding
 import com.zhongpin.lib_base.utils.LogUtils
 import com.zhongpin.lib_base.view.LoadingDialog
 import com.zhongpin.mvvm_android.base.view.BaseVMActivity
+import com.zhongpin.mvvm_android.bean.EntInfoResponse
+import com.zhongpin.mvvm_android.bean.LatLntResponse
 import com.zhongpin.mvvm_android.photo.selector.GlideEngine
 import top.zibin.luban.Luban
 import top.zibin.luban.OnNewCompressListener
@@ -43,6 +45,7 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
 
     private var yingYeZhiZhaoPath:String? = null;
     private var yingYeZhiZhaoUrl:String? = null;
+    private var latLntResponse: LatLntResponse? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //android:windowSoftInputMode="adjustResize"
@@ -128,7 +131,7 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
                         if (filePath.isNullOrEmpty()) {
                             return
                         }
-                        uploadEntImage(filePath)
+                        ocrEntImage(filePath)
                     }
 
                     override fun onCancel() {
@@ -153,10 +156,18 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
         }
 
         mBinding.autoChooseJingweidu.setOnClickListener {
+            if (TextUtils.isEmpty(getAreaText())) {
+                Toast.makeText(applicationContext,"请选择省市区", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
             val address = mBinding.chooseShouhuoAreaText.text.trim().toString() +  mBinding.editShouHuoDetail.text.trim().toString()
             mViewModel.getLntLngInfo(address).observe(this@CompanyVerifyActivity) {
-                if (it.success) {
-                    mBinding.chooseJingweiduEditText.setText("" + (it.data ?: ""))
+                if (it.success ) {
+                    latLntResponse = it.data
+                    mBinding.chooseJingweiduEditText.setText( "" + (it.data?.longitude  ?: "") +  "/" + (it.data?.latitude ?: ""))
+
+                    val lntlats = mBinding.chooseJingweiduEditText.text.trim().toString().split("/")
+                    LogUtils.d("CompanyVerifyActivity ", "CompanyVerifyActivity lntlats " + lntlats)
                 }
             }
         }
@@ -175,7 +186,39 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
         super.onDestroy()
     }
 
-    fun  uploadEntImage(filePath: String) {
+    fun  ocrEntImage(filePath: String) {
+        mViewModel.identifyEntInfo(filePath).observe(this) { outerIt ->
+            if (outerIt.success) {
+                outerIt.data?.let {
+                   updateEntInfo(it)
+                }
+                //update info
+                updateEntImage(filePath)
+            } else {
+                Toast.makeText(applicationContext,"身份证信息识别失败," + outerIt.msg, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    fun  updateEntInfo(entInfo: EntInfoResponse) {
+        if (TextUtils.isEmpty(mBinding.editCompanyname.text.toString())) {
+            mBinding.editCompanyname.setText(entInfo.companyName ?: "")
+        }
+        if (TextUtils.isEmpty(mBinding.editCompanyAddress.text.toString())) {
+            mBinding.editCompanyAddress.setText(entInfo.address ?: "")
+        }
+        if (TextUtils.isEmpty(mBinding.editFaren.text.toString())) {
+            mBinding.editFaren.setText(entInfo.legalPerson ?: "")
+        }
+        if (TextUtils.isEmpty(mBinding.editXinYongCode.text.toString())) {
+            mBinding.editXinYongCode.setText(entInfo.creditCode ?: "")
+        }
+        if (TextUtils.isEmpty(mBinding.editNaShuiCode.text.toString())) {
+            mBinding.editNaShuiCode.setText(entInfo.creditCode ?: "")
+        }
+    }
+
+    fun  updateEntImage(filePath: String) {
         yingYeZhiZhaoPath = filePath
         mBinding.yingYeZhiZhaoText.visibility = View.GONE
         Glide.with(this@CompanyVerifyActivity)
@@ -270,8 +313,17 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
         }
         receiveAddress["abbr"] = mBinding.editShouHuoShort.text.trim().toString()
 
-        receiveAddress["latitude"] = ""
-        receiveAddress["longitude"] = ""
+        if (mBinding.chooseJingweiduEditText.text.isNotEmpty()) {
+            val lntlats = mBinding.chooseJingweiduEditText.text.trim().toString().split("/")
+            if(lntlats.size == 2) {
+                receiveAddress["latitude"] = lntlats[0]
+                receiveAddress["longitude"] =  lntlats[1]
+            } else {
+                dismissLoadingDialog()
+                Toast.makeText(applicationContext, "经度/纬度，格式度不合法", Toast.LENGTH_LONG).show()
+                return
+            }
+        }
         receiveAddress["province"] = mProvince?.name
         receiveAddress["city"] = mCity?.name
         receiveAddress["region"] = mCounty?.name
@@ -324,6 +376,14 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
         mCity = city
         mCounty = county
         mBinding.chooseShouhuoAreaText.text = address
+    }
+
+    private fun getAreaText():String {
+        if(!mBinding.chooseShouhuoAreaText.text.toString().contains("请选择")) {
+            return mBinding.chooseShouhuoAreaText.text.trim()
+                .toString()
+        }
+        return ""
     }
 
     private var mProvince: ProvinceEntity? = null;

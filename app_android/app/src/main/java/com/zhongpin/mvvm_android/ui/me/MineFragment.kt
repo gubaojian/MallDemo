@@ -11,11 +11,15 @@ import android.view.View
 import android.view.ViewGroup
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.zhongpin.app.databinding.FragmentMineBinding
+import com.zhongpin.lib_base.utils.EventBusRegister
+import com.zhongpin.mvvm_android.bean.LoginEvent
 import com.zhongpin.mvvm_android.bean.UserInfoResponse
 import com.zhongpin.mvvm_android.common.utils.StatusBarUtil
 import com.zhongpin.mvvm_android.ui.login.LoginActivity
 import com.zhongpin.mvvm_android.ui.verify.company.CompanyVerifyActivity
 import com.zhongpin.mvvm_android.ui.verify.person.PersonVerifyActivity
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import com.zhongpin.mvvm_android.base.view.BaseVMFragment as BaseVMFragment
 
 // TODO: Rename parameter arguments, choose names that match
@@ -27,6 +31,7 @@ private const val ARG_PARAM1 = "param1"
  * Use the [HomeFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+@EventBusRegister
 class MineFragment : BaseVMFragment<MineViewModel>() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -80,16 +85,23 @@ class MineFragment : BaseVMFragment<MineViewModel>() {
     }
 
     override fun initData() {
-        mViewModel.loadBannerCo()
+        mViewModel.getUserInfoCo()
         /**
         Handler().postDelayed({
             mViewModel.loadSeckillGoodsData()
         }, 2000)*/
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshUser(loginEvent : LoginEvent){
+        if (loginEvent.isLogin) {
+            initData();
+        }
+    }
+
 
     override fun initDataObserver() {
-        mViewModel.mBannerData.observe(viewLifecycleOwner, Observer {
+        mViewModel.mUserInfoData.observe(viewLifecycleOwner, Observer {
             setBannerData(it)
         })
 
@@ -105,7 +117,7 @@ class MineFragment : BaseVMFragment<MineViewModel>() {
         })*/
     }
 
-    private fun setBannerData(list: List<UserInfoResponse>) {
+    private fun setBannerData(list: UserInfoResponse) {
         binding.text.setText("" + list.toString() + " \n " +   param1 + "test" )
         //mHeaderView.mBanner.adapter = BannerImageAdapter(list)
         //mHeaderView.mBanner.addBannerLifecycleObserver(this)

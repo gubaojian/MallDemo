@@ -20,6 +20,10 @@ interface ApiService {
     @GET(USER_INFO)
     suspend fun getUserInfoCo(): BaseResponse<List<UserInfoResponse>>
 
+    @GET(USER_INFO)
+    suspend fun getUserInfo(): BaseResponse<UserInfoResponse>
+
+
     @POST(LOGIN)
     suspend fun loginCo(@Body parameters:HashMap<String,Any>): BaseResponse<LoginResponse>
 
@@ -60,7 +64,7 @@ interface ApiService {
 
 
     @GET(SELECT_ADDRESS_POI_INFO)
-    suspend fun getLntLngInfo(@Query("address") address: String): BaseResponse<String>
+    suspend fun getLntLngInfo(@Query("address") address: String): BaseResponse<LatLntResponse>
 
 
     @Multipart

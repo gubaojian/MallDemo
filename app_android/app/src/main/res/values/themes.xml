@@ -20,6 +20,7 @@
 
     <style name="Theme.Verify" parent="Theme.AppCompat.Light.NoActionBar" >
         <!-- Customize your theme here. -->
+        <item name="android:windowLightStatusBar">true</item>
         <item name="colorPrimary">#FFFFFF</item>
         <item name="colorPrimaryDark">#FFFFFF</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -28,6 +29,7 @@
 
     <style name="Theme.White" parent="Theme.AppCompat.Light.NoActionBar" >
         <!-- Customize your theme here. -->
+        <item name="android:windowLightStatusBar">true</item>
         <item name="colorPrimary">#FFFFFF</item>
         <item name="colorPrimaryDark">#FFFFFF</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -54,5 +56,15 @@
         <item name="colorPrimary">#333333</item>
         <item name="colorPrimaryDark">#333333</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    <!--没有选中的样式-->
+    <style name="navTabBarNormalText">
+        <item name="android:textColor">#999999</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <!--选中的样式-->
+    <style name="navTabBarSelectedText">
+        <item name="android:textColor">#333333</item>
+        <item name="android:textSize">14sp</item>
     </style>
 </resources>

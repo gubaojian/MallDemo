@@ -44,6 +44,9 @@
         app:labelVisibilityMode="labeled"
         android:background="?android:attr/windowBackground"
         app:menu="@menu/bottom_nav_menu"
+        app:itemTextAppearanceActive="@style/navTabBarSelectedText"
+        app:itemTextAppearanceInactive="@style/navTabBarNormalText"
+        app:itemIconSize="@dimen/dp_24"
         android:theme="@style/navTabBar"
         android:visibility="gone"/>
 </LinearLayout>

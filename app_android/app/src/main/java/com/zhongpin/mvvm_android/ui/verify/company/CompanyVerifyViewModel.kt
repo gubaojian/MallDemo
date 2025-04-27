@@ -2,6 +2,9 @@ package com.zhongpin.mvvm_android.ui.verify.company
 
 import androidx.lifecycle.MutableLiveData
 import com.zhongpin.mvvm_android.base.vm.BaseViewModel
+import com.zhongpin.mvvm_android.bean.EntInfoResponse
+import com.zhongpin.mvvm_android.bean.IdCardInfoResponse
+import com.zhongpin.mvvm_android.bean.LatLntResponse
 import com.zhongpin.mvvm_android.bean.UserInfoResponse
 import com.zhongpin.mvvm_android.network.BaseResponse
 import com.zhongpin.mvvm_android.network.initiateRequest
@@ -33,8 +36,8 @@ class CompanyVerifyViewModel  : BaseViewModel<CompanyVerifyRepository>() {
         return mLiveData
     }
 
-    fun getLntLngInfo(address:String) : MutableLiveData<BaseResponse<String>> {
-        val mLiveData: MutableLiveData<BaseResponse<String>> = MutableLiveData()
+    fun getLntLngInfo(address:String) : MutableLiveData<BaseResponse<LatLntResponse>> {
+        val mLiveData: MutableLiveData<BaseResponse<LatLntResponse>> = MutableLiveData()
         initiateRequest({
             mLiveData.value = mRepository.getLntLngInfo(address);
         }, loadState)
@@ -45,6 +48,14 @@ class CompanyVerifyViewModel  : BaseViewModel<CompanyVerifyRepository>() {
         val mLiveData: MutableLiveData<BaseResponse<String>> = MutableLiveData()
         initiateRequest({
             mLiveData.value = mRepository.uploadImage(filePath);
+        }, loadState)
+        return mLiveData
+    }
+
+    fun identifyEntInfo(filePath:String) : MutableLiveData<BaseResponse<EntInfoResponse>> {
+        val mLiveData: MutableLiveData<BaseResponse<EntInfoResponse>> = MutableLiveData()
+        initiateRequest({
+            mLiveData.value = mRepository.identifyEntInfo(filePath);
         }, loadState)
         return mLiveData
     }

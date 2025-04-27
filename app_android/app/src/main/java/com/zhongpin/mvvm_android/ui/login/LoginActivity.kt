@@ -2,40 +2,26 @@ package com.zhongpin.mvvm_android.ui.login
 
 import android.content.DialogInterface
 import android.content.Intent
-import android.os.Build
 import android.os.Build.*
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.os.Handler
-import android.os.Looper
-import android.text.Html
 import android.text.Html.*
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.blankj.utilcode.util.SPUtils
 import com.zhongpin.app.BuildConfig
-import com.zhongpin.app.R
 import com.zhongpin.app.databinding.ActivityLoginBinding
-import com.zhongpin.app.databinding.ActivityMainBinding
-import com.zhongpin.app.databinding.FragmentSettingBinding
 import com.zhongpin.lib_base.view.LoadingDialog
-import com.zhongpin.mvvm_android.base.view.BaseActivity
 import com.zhongpin.mvvm_android.base.view.BaseVMActivity
 import com.zhongpin.mvvm_android.bean.LoginEvent
 import com.zhongpin.mvvm_android.common.utils.Constant
 import com.zhongpin.mvvm_android.common.utils.StatusBarUtil
 import com.zhongpin.mvvm_android.ui.find.FindPwdActivity
 import com.zhongpin.mvvm_android.ui.register.RegisterActivity
-import com.zhongpin.mvvm_android.ui.verify.person.PersonVerifyActivity
 import com.zhongpin.mvvm_android.ui.web.WebActivity
 import org.greenrobot.eventbus.EventBus
 
@@ -43,9 +29,9 @@ class LoginActivity : BaseVMActivity<LoginViewModel>() {
 
 
     private lateinit var mBinding: ActivityLoginBinding;
-    private lateinit var mLoadingDialog: LoadingDialog
     private lateinit var countDownTimer: CountDownTimer
 
+    private var mLoadingDialog: LoadingDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         StatusBarUtil.immersive(this)
@@ -60,9 +46,11 @@ class LoginActivity : BaseVMActivity<LoginViewModel>() {
     }
 
     override fun initView() {
+        mViewModel.loadState.observe(this, {
+            dismissLoadingDialog()
+        })
         super.initView()
         StatusBarUtil.setMargin(this, mBinding.content)
-        mLoadingDialog = LoadingDialog(this, false)
         mBinding.ivBack.setOnClickListener { finish() }
         mBinding.btnLogin.setOnClickListener {
             loginAndCheck()
@@ -156,14 +144,19 @@ class LoginActivity : BaseVMActivity<LoginViewModel>() {
      * show 加载中
      */
     fun showLoadingDialog() {
-        mLoadingDialog.showDialog(this, false)
+        dismissLoadingDialog()
+        if (mLoadingDialog == null) {
+            mLoadingDialog = LoadingDialog(this, false)
+        }
+        mLoadingDialog?.showDialogV2(this, false)
     }
 
     /**
      * dismiss loading dialog
      */
     fun dismissLoadingDialog() {
-        mLoadingDialog.dismissDialog()
+        mLoadingDialog?.dismissDialogV2()
+        mLoadingDialog = null
     }
 
     fun realLogin(){
@@ -176,6 +169,7 @@ class LoginActivity : BaseVMActivity<LoginViewModel>() {
                 }
             }
             showLoadingDialog()
+
             mViewModel.login(
                 mBinding.editUsername.text.trim().toString(),
                 mBinding.editPassword.text.trim().toString(),
@@ -203,6 +197,7 @@ class LoginActivity : BaseVMActivity<LoginViewModel>() {
                     Toast.makeText(applicationContext,"登录失败," + it.msg, Toast.LENGTH_LONG).show()
                 }
             }
+
         } else {
             Toast.makeText(applicationContext,"用户名或密码为空", Toast.LENGTH_LONG).show()
         }

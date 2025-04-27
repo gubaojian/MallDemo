@@ -1,6 +1,7 @@
 package com.zhongpin.mvvm_android.network
 import com.zhongpin.lib_base.utils.LogUtils
 import com.blankj.utilcode.util.SPUtils
+import com.zhongpin.app.BuildConfig
 import com.zhongpin.mvvm_android.common.utils.Constant
 import com.zhongpin.mvvm_android.common.utils.SPreference
 import okhttp3.Interceptor
@@ -42,20 +43,22 @@ class RetrofitFactory private constructor() {
     }
 
     private fun initOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .readTimeout(60, TimeUnit.SECONDS)
+        val builder = OkHttpClient.Builder();
+        builder.readTimeout(60, TimeUnit.SECONDS)
             .connectTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
-            .addInterceptor(initLoggingIntercept())
-            .addInterceptor(initCookieIntercept())
+        if (BuildConfig.DEBUG) {
+            builder.addInterceptor(initLoggingIntercept())
+        }
+        builder.addInterceptor(initCookieIntercept())
             .addInterceptor(initLoginIntercept())
             .addInterceptor(initCommonInterceptor())
-            .build()
+        return builder.build()
     }
     private fun initLoggingIntercept(): Interceptor {
         return HttpLoggingInterceptor { message ->
             try {
-                if (message.length < 1024*10) {
+                if (message.length < 1024*4) {
                     val text: String = URLDecoder.decode(message, "utf-8")
                     LogUtils.e("OKHttp-----", text)
                 }

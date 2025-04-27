@@ -8,14 +8,6 @@ import com.zhongpin.mvvm_android.network.initiateRequest
 
 class FindPwdViewModel  : BaseViewModel<FindPwdRepository>() {
 
-    var mBannerData: MutableLiveData<List<UserInfoResponse>> = MutableLiveData()
-
-    fun loadBannerCo() {
-        initiateRequest({
-            mBannerData.value = mRepository.loadBannerCo()
-        }, loadState)
-    }
-
 
     fun sendVerifyCode(mobile:String) : MutableLiveData<BaseResponse<Boolean>> {
         val mLoginData: MutableLiveData<BaseResponse<Boolean>> = MutableLiveData()

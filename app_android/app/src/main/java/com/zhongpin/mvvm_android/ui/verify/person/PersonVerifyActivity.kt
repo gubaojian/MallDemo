@@ -24,14 +24,11 @@ import com.zhongpin.app.databinding.ActivityPersonVerifyBinding
 import com.zhongpin.lib_base.utils.LogUtils
 import com.zhongpin.lib_base.view.LoadingDialog
 import com.zhongpin.mvvm_android.base.view.BaseVMActivity
-import com.zhongpin.mvvm_android.common.utils.StatusBarUtil
 import com.zhongpin.mvvm_android.photo.selector.GlideEngine
 import com.zhongpin.mvvm_android.ui.verify.company.CompanyVerifyActivity
 import top.zibin.luban.Luban
-import top.zibin.luban.OnCompressListener
 import top.zibin.luban.OnNewCompressListener
 import java.io.File
-import java.util.Locale
 
 
 class PersonVerifyActivity : BaseVMActivity<PersonVerifyViewModel>() {
@@ -137,7 +134,7 @@ class PersonVerifyActivity : BaseVMActivity<PersonVerifyViewModel>() {
                         if (filePath.isNullOrEmpty()) {
                             return
                         }
-                        uploadFrontImage(filePath)
+                        ocrFrontImage(filePath)
                     }
 
                     override fun onCancel() {
@@ -241,7 +238,7 @@ class PersonVerifyActivity : BaseVMActivity<PersonVerifyViewModel>() {
         super.onDestroy()
     }
 
-    fun  uploadFrontImage(filePath: String) {
+    fun  ocrFrontImage(filePath: String) {
         mViewModel.identifyIdCardInfo(filePath).observe(this) { outerIt ->
             if (outerIt.success) {
                 idCardFrontImagePath = filePath
@@ -257,7 +254,6 @@ class PersonVerifyActivity : BaseVMActivity<PersonVerifyViewModel>() {
                     .placeholder(mBinding.idCardFront.drawable)
                     .into(mBinding.idCardFront)
             } else {
-                idCardFrontImagePath = null
                 Toast.makeText(applicationContext,"身份证信息识别失败," + outerIt.msg, Toast.LENGTH_LONG).show()
             }
         }

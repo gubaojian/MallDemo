@@ -15,8 +15,12 @@ class LoadingDialog(context: Context, canNotCancel: Boolean) : Dialog(
 
     private var loadingDialog: LoadingDialog? = null
 
+
     init {
         setContentView(R.layout.layout_loading_view)
+    }
+
+    private fun  startAnimation() {
         val imageView: ImageView = findViewById(R.id.iv_image)
         val animation: Animation = RotateAnimation(
             0f,
@@ -32,6 +36,11 @@ class LoadingDialog(context: Context, canNotCancel: Boolean) : Dialog(
         imageView.startAnimation(animation)
     }
 
+    private fun cancelAnimation() {
+        val imageView: ImageView = findViewById(R.id.iv_image)
+        imageView.clearAnimation()
+    }
+
     fun showDialog(context: Context, isCancel: Boolean) {
         if (context is Activity) {
             if (context.isFinishing) {
@@ -41,11 +50,36 @@ class LoadingDialog(context: Context, canNotCancel: Boolean) : Dialog(
         if (loadingDialog == null) {
             loadingDialog = LoadingDialog(context, isCancel)
         }
+        loadingDialog?.startAnimation()
         loadingDialog?.show()
     }
 
     fun dismissDialog() {
+        loadingDialog?.cancelAnimation()
         loadingDialog?.dismiss()
     }
+
+
+    fun showDialogV2(context: Context, isCancel: Boolean) {
+        if (context is Activity) {
+            if (context.isFinishing) {
+                return
+            }
+        }
+        try {
+            startAnimation()
+            show()
+        } catch (_:Exception) {}
+
+    }
+
+    fun dismissDialogV2() {
+        try {
+            cancelAnimation()
+            dismiss()
+        } catch (_:Exception) {}
+
+    }
+
 
 }

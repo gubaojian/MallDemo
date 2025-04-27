@@ -58,6 +58,7 @@ dependencies {
 
     implementation libs.androidx.core.ktx
     implementation libs.androidx.lifecycle.runtime.ktx
+
     implementation libs.androidx.activity.compose
     implementation libs.androidx.appcompat
     implementation platform(libs.androidx.compose.bom)
@@ -67,6 +68,7 @@ dependencies {
     implementation libs.androidx.constraintlayout
     implementation libs.androidx.lifecycle.livedata.ktx
     implementation libs.androidx.lifecycle.viewmodel.ktx
+    implementation libs.androidx.lifecycle.process
     implementation libs.androidx.swiperefreshlayout
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
@@ -142,4 +144,28 @@ dependencies {
 
     //https://github.com/Curzibn/Luban
     //implementation 'top.zibin:Luban:1.1.8'
+
+    //https://github.com/gyf-dev/ImmersionBar
+    // 沉浸式导航栏，基础依赖包，必须要依赖
+    implementation 'com.geyifeng.immersionbar:immersionbar:3.2.2'
+    // kotlin扩展（可选）
+    implementation 'com.geyifeng.immersionbar:immersionbar-ktx:3.2.2'
+    // fragment快速实现（可选）已废弃
+    implementation 'com.geyifeng.immersionbar:immersionbar-components:3.2.2'
+
+
+    //https://github.com/junixapp/XPopup?tab=readme-ov-file
+    implementation 'com.github.li-xiaojun:XPopup:2.10.0'
+
+    //https://github.com/airbnb/lottie-android
+    implementation 'com.airbnb.android:lottie:6.6.6'
+
+    //https://github.com/guolindev/PermissionX
+   implementation 'com.guolindev.permissionx:permissionx:1.8.1'
+
+    //https://github.com/JeremyLiao/LiveEventBus
+    implementation 'io.github.jeremyliao:live-event-bus-x:1.8.0'
+
+    //https://github.com/Baseflow/PhotoView
+    implementation 'com.github.chrisbanes:PhotoView:2.0.0'
 }

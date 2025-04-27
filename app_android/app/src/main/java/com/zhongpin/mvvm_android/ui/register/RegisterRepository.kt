@@ -29,11 +29,11 @@ class RegisterRepository(private val loadState: MutableLiveData<State>): BaseRep
         ))
     }
 
-    suspend fun register(mobile:String, password:String, code:String,nick:String): BaseResponse<Boolean> {
+    suspend fun register(mobile:String, password:String, code:String, nickName:String): BaseResponse<Boolean> {
         return apiService.registerCo(hashMapOf(
             "mobile" to mobile,
             "code" to code,
-            "nick" to nick,
+            "nickName" to nickName,
             "password" to password
         ))
     }

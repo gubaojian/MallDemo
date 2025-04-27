@@ -3,6 +3,9 @@ package com.zhongpin.mvvm_android.ui.verify.company
 import androidx.lifecycle.MutableLiveData
 import com.zhongpin.mvvm_android.base.repository.BaseRepository
 import com.zhongpin.mvvm_android.base.viewstate.State
+import com.zhongpin.mvvm_android.bean.EntInfoResponse
+import com.zhongpin.mvvm_android.bean.IdCardInfoResponse
+import com.zhongpin.mvvm_android.bean.LatLntResponse
 import com.zhongpin.mvvm_android.bean.UserInfoResponse
 import com.zhongpin.mvvm_android.network.BaseResponse
 import com.zhongpin.mvvm_android.network.dataConvert
@@ -26,7 +29,7 @@ class CompanyVerifyRepository(private val loadState: MutableLiveData<State>): Ba
         return apiService.submitEntInfoAuth(parameters)
     }
 
-    suspend fun getLntLngInfo(address: String): BaseResponse<String> {
+    suspend fun getLntLngInfo(address: String): BaseResponse<LatLntResponse> {
         return apiService.getLntLngInfo(address)
     }
 
@@ -40,6 +43,18 @@ class CompanyVerifyRepository(private val loadState: MutableLiveData<State>): Ba
             MultipartBody.Part.createFormData("file", file.name, requestFile)
 
         return apiService.uploadImage(filePart)
+    }
+
+    suspend fun identifyEntInfo(filePath:String): BaseResponse<EntInfoResponse> {
+        val file = File(filePath)
+        val requestFile =
+            RequestBody.create(MultipartBody.FORM, file)
+        // MultipartBody.Part is used to send also the actual file name
+        // https://stackoverflow.com/questions/39953457/how-to-upload-an-image-file-in-retrofit-2
+        val filePart: MultipartBody.Part =
+            MultipartBody.Part.createFormData("file", file.name, requestFile)
+
+        return apiService.identifyEntCard(filePart)
     }
 
 }

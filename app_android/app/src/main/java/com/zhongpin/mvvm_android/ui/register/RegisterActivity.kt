@@ -31,9 +31,10 @@ class RegisterActivity : BaseVMActivity<RegisterViewModel>() {
 
 
     private lateinit var mBinding: ActivityRegisterBinding;
-    private lateinit var mLoadingDialog: LoadingDialog
     private lateinit var countDownTimer: CountDownTimer
 
+
+    private var mLoadingDialog: LoadingDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         StatusBarUtil.immersive(this)
@@ -50,7 +51,9 @@ class RegisterActivity : BaseVMActivity<RegisterViewModel>() {
     override fun initView() {
         super.initView()
         StatusBarUtil.setMargin(this, mBinding.content)
-        mLoadingDialog = LoadingDialog(this, false)
+        mViewModel.loadState.observe(this, {
+            dismissLoadingDialog()
+        })
         mBinding.ivBack.setOnClickListener { finish() }
         mBinding.btnLogin.setOnClickListener {
             checkAndRegister()
@@ -146,14 +149,19 @@ class RegisterActivity : BaseVMActivity<RegisterViewModel>() {
      * show 加载中
      */
     fun showLoadingDialog() {
-        mLoadingDialog.showDialog(this, false)
+        dismissLoadingDialog()
+        if (mLoadingDialog == null) {
+            mLoadingDialog = LoadingDialog(this, false)
+        }
+        mLoadingDialog?.showDialog(this, false)
     }
 
     /**
      * dismiss loading dialog
      */
     fun dismissLoadingDialog() {
-        mLoadingDialog.dismissDialog()
+        mLoadingDialog?.dismissDialog()
+        mLoadingDialog = null
     }
 
     fun realRegister(){

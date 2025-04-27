@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.util.Log
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
@@ -12,6 +13,7 @@ import com.kingja.loadsir.core.LoadSir
 import com.tencent.mmkv.MMKV
 import com.zhongpin.lib_base.app.ActivityLifecycleCallbacksImpl
 import com.zhongpin.lib_base.app.LoadModuleProxy
+import com.zhongpin.mvvm_android.app.AppLifecycleListener
 import com.zhongpin.mvvm_android.common.callback.EmptyCallBack
 import com.zhongpin.mvvm_android.common.callback.ErrorCallBack
 import com.zhongpin.mvvm_android.common.callback.LoadingCallBack
@@ -61,6 +63,7 @@ class MyApplication: Application(), ViewModelStoreOwner {
         INSTANCE = this
         mAppViewModelStore = ViewModelStore()
 
+        ProcessLifecycleOwner.get().lifecycle.addObserver(AppLifecycleListener())
         // 全局监听 Activity 生命周期
         registerActivityLifecycleCallbacks(ActivityLifecycleCallbacksImpl())
 

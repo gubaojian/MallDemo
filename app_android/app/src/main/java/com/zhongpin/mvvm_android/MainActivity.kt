@@ -71,6 +71,7 @@ class MainActivity  : BaseActivity() {
     }
 
     private fun initBottomNavigation() {
+        binding.navView.itemIconTintList = null
         binding.navView.setOnNavigationItemSelectedListener { menuItem: MenuItem ->
             when (menuItem.itemId) {
                 id.menu_home -> {

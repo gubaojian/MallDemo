@@ -8,8 +8,8 @@ import com.zhongpin.mvvm_android.network.dataConvert
 
 class MineRepository(private val loadState: MutableLiveData<State>): BaseRepository() {
 
-    suspend fun loadBannerCo(): List<UserInfoResponse>? {
-        return apiService.getUserInfoCo().dataConvert(loadState)
+    suspend fun getUserInfo(): UserInfoResponse? {
+        return apiService.getUserInfo().dataConvert(loadState)
     }
 
 

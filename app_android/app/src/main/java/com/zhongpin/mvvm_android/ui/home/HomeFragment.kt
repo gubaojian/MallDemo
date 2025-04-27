@@ -14,6 +14,10 @@ import com.zhongpin.mvvm_android.bean.UserInfoResponse
 import com.zhongpin.mvvm_android.common.utils.Constant
 import com.zhongpin.mvvm_android.common.utils.StatusBarUtil
 import com.zhongpin.app.databinding.FragmentHomeBinding
+import com.zhongpin.lib_base.utils.EventBusRegister
+import com.zhongpin.mvvm_android.bean.LoginEvent
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import com.zhongpin.mvvm_android.base.view.BaseVMFragment as BaseVMFragment
 
 // TODO: Rename parameter arguments, choose names that match
@@ -25,6 +29,7 @@ private const val ARG_PARAM1 = "param1"
  * Use the [HomeFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+@EventBusRegister
 class HomeFragment : BaseVMFragment<HomeFragmentViewModel>() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -82,6 +87,12 @@ class HomeFragment : BaseVMFragment<HomeFragmentViewModel>() {
         }, 2000)*/
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshUser(loginEvent : LoginEvent){
+        if (loginEvent.isLogin) {
+            initData();
+        }
+    }
 
     override fun initDataObserver() {
         mViewModel.mBannerData.observe(viewLifecycleOwner, Observer {

@@ -19,9 +19,9 @@ class FindPwdActivity : BaseVMActivity<FindPwdViewModel>() {
 
 
     private lateinit var mBinding: ActivityFindPwdBinding;
-    private lateinit var mLoadingDialog: LoadingDialog
     private lateinit var countDownTimer: CountDownTimer
 
+    private var mLoadingDialog: LoadingDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         StatusBarUtil.immersive(this)
@@ -37,8 +37,10 @@ class FindPwdActivity : BaseVMActivity<FindPwdViewModel>() {
 
     override fun initView() {
         super.initView()
+        mViewModel.loadState.observe(this, {
+            dismissLoadingDialog()
+        })
         StatusBarUtil.setMargin(this, mBinding.content)
-        mLoadingDialog = LoadingDialog(this, false)
         mBinding.ivBack.setOnClickListener { finish() }
         mBinding.btnLogin.setOnClickListener {
             setAndCheck()
@@ -87,14 +89,19 @@ class FindPwdActivity : BaseVMActivity<FindPwdViewModel>() {
      * show 加载中
      */
     fun showLoadingDialog() {
-        mLoadingDialog.showDialog(this, false)
+        dismissLoadingDialog()
+        if (mLoadingDialog == null) {
+            mLoadingDialog = LoadingDialog(this, false)
+        }
+        mLoadingDialog?.showDialog(this, false)
     }
 
     /**
      * dismiss loading dialog
      */
     fun dismissLoadingDialog() {
-        mLoadingDialog.dismissDialog()
+        mLoadingDialog?.dismissDialog()
+        mLoadingDialog = null
     }
 
     fun realSetPassword(){
@@ -107,8 +114,8 @@ class FindPwdActivity : BaseVMActivity<FindPwdViewModel>() {
 
     fun  goSetPwdActivity() {
         val intent = Intent(this, FindSetPwdActivity::class.java)
-        intent.putExtra("code", mBinding.editUsername.text.trim().toString())
-        intent.putExtra("mobile", mBinding.editVerifyCode.text.trim().toString())
+        intent.putExtra("code", mBinding.editVerifyCode.text.trim().toString())
+        intent.putExtra("mobile", mBinding.editUsername.text.trim().toString())
         startActivity(intent)
         finish()
     }

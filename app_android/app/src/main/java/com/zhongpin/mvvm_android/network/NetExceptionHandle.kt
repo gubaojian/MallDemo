@@ -7,7 +7,9 @@ import com.zhongpin.mvvm_android.base.viewstate.StateType
 import com.zhongpin.mvvm_android.common.utils.Constant
 import org.apache.http.conn.ConnectTimeoutException
 import retrofit2.HttpException
+import java.io.IOException
 import java.net.ConnectException
+import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
 /**
@@ -26,6 +28,9 @@ object NetExceptionHandle {
                     loadState.postValue(State(StateType.NETWORK_ERROR,Constant.COMMON_KEY))
                 }
                 is ConnectTimeoutException -> {
+                    loadState.postValue(State(StateType.NETWORK_ERROR,Constant.COMMON_KEY))
+                }
+                is SocketTimeoutException -> {
                     loadState.postValue(State(StateType.NETWORK_ERROR,Constant.COMMON_KEY))
                 }
                 is UnknownHostException -> {
