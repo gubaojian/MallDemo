@@ -148,7 +148,7 @@ class LoginActivity : BaseVMActivity<LoginViewModel>() {
         if (mLoadingDialog == null) {
             mLoadingDialog = LoadingDialog(this, false)
         }
-        mLoadingDialog?.showDialogV2(this, false)
+        mLoadingDialog?.showDialogV2(this)
     }
 
     /**

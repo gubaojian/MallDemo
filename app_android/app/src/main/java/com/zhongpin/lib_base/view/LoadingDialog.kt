@@ -8,7 +8,7 @@ import android.view.animation.RotateAnimation
 import android.widget.ImageView
 import com.zhongpin.app.R
 
-class LoadingDialog(context: Context, canNotCancel: Boolean) : Dialog(
+class LoadingDialog(context: Context, val canNotCancel: Boolean) : Dialog(
     context,
     R.style.LoadingDialog
 ) {
@@ -31,7 +31,7 @@ class LoadingDialog(context: Context, canNotCancel: Boolean) : Dialog(
             0.5f
         )
         animation.duration = 2000
-        animation.repeatCount = 10
+        animation.repeatCount = Animation.INFINITE
         animation.fillAfter = true
         imageView.startAnimation(animation)
     }
@@ -60,7 +60,7 @@ class LoadingDialog(context: Context, canNotCancel: Boolean) : Dialog(
     }
 
 
-    fun showDialogV2(context: Context, isCancel: Boolean) {
+    fun showDialogV2(context: Context) {
         if (context is Activity) {
             if (context.isFinishing) {
                 return

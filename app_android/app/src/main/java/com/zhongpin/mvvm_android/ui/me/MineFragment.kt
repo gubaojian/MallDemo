@@ -1,26 +1,32 @@
 package com.zhongpin.mvvm_android.ui.me
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import com.google.zxing.client.android.Intents
+import com.journeyapps.barcodescanner.CaptureActivity
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.zhongpin.app.databinding.FragmentMineBinding
 import com.zhongpin.lib_base.utils.EventBusRegister
+import com.zhongpin.mvvm_android.base.view.BaseVMFragment
 import com.zhongpin.mvvm_android.bean.LoginEvent
 import com.zhongpin.mvvm_android.bean.UserInfoResponse
 import com.zhongpin.mvvm_android.common.utils.StatusBarUtil
 import com.zhongpin.mvvm_android.ui.login.LoginActivity
+import com.zhongpin.mvvm_android.ui.photo.preview.PhonePreviewerActivity
+import com.zhongpin.mvvm_android.ui.scan.ScanCaptureActivity
 import com.zhongpin.mvvm_android.ui.verify.company.CompanyVerifyActivity
 import com.zhongpin.mvvm_android.ui.verify.person.PersonVerifyActivity
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import com.zhongpin.mvvm_android.base.view.BaseVMFragment as BaseVMFragment
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -82,6 +88,32 @@ class MineFragment : BaseVMFragment<MineViewModel>() {
             startActivity(intent)
         }
 
+        binding.photo.setOnClickListener {
+            val intent = Intent(activity, PhonePreviewerActivity::class.java)
+            intent.putExtra("imageUrls", arrayOf<String>(
+                "https://img.alicdn.com/bao/uploaded/i2/2268175280/O1CN01wvhOlY1osIBwjOCOP_!!2268175280.jpg_460x460q90.jpg_.webp",
+                "https://img.alicdn.com/bao/uploaded/i3/3928142771/O1CN01tzdOzK1WLANtDlnTJ_!!3928142771.jpg_460x460q90.jpg_.webp"))
+            startActivity(intent)
+        }
+
+        binding.scan.setOnClickListener {
+            val intent = Intent(activity, CaptureActivity::class.java)
+            startActivityForResult(intent, 100)
+        }
+
+        binding.scan2.setOnClickListener {
+            val intent = Intent(activity, ScanCaptureActivity::class.java)
+            startActivityForResult(intent, 100)
+        }
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
+            Toast.makeText(activity!!.applicationContext,"扫描结果," + data?.getStringExtra(Intents.Scan.RESULT), Toast.LENGTH_LONG).show()
+
+        }
     }
 
     override fun initData() {

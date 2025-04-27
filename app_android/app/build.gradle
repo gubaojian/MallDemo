@@ -161,11 +161,19 @@ dependencies {
     implementation 'com.airbnb.android:lottie:6.6.6'
 
     //https://github.com/guolindev/PermissionX
-   implementation 'com.guolindev.permissionx:permissionx:1.8.1'
+   //implementation 'com.guolindev.permissionx:permissionx:1.8.1'
+
+    // 权限请求框架：https://github.com/getActivity/XXPermissions
+    implementation 'com.github.getActivity:XXPermissions:21.2'
 
     //https://github.com/JeremyLiao/LiveEventBus
     implementation 'io.github.jeremyliao:live-event-bus-x:1.8.0'
 
     //https://github.com/Baseflow/PhotoView
     implementation 'com.github.chrisbanes:PhotoView:2.0.0'
+
+
+    //https://github.com/journeyapps/zxing-android-embedded
+    //https://blog.csdn.net/qq_29848853/article/details/131057600
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
 }

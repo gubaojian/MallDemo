@@ -9,10 +9,10 @@ package com.zhongpin.mvvm_android.common.utils
 object Constant {
 
     // 开发环境
-    const val BASE_URL = "http://192.168.6.33:81/"
+    //const val BASE_URL = "http://192.168.6.33:81/"
 
     // 私人本机环境
-    //const val BASE_URL = "http://192.168.110.243:81/"
+    const val BASE_URL = "http://192.168.6.36:81/"
 
 
     const val HOME = 0

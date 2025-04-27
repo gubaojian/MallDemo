@@ -142,7 +142,7 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
         mBinding.chooseShouhuoAreaContainer.setOnClickListener {
             val picker = AddressPicker(this)
             picker.setAddressMode(AddressMode.PROVINCE_CITY_COUNTY)
-            picker.setDefaultValue("浙江省", "杭州市", "西湖区")
+            picker.setDefaultValue("", "", "")
             picker.setOnAddressPickedListener(this)
             picker.wheelLayout.setOnLinkageSelectedListener { first, second, third ->
                 picker.titleView.text = String.format(

@@ -43,6 +43,25 @@
                     android:layout_marginTop="20dp"
                     android:text="企业认证"
                     android:id="@+id/ent_verify"></Button>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="图片查看器"
+                    android:id="@+id/photo"></Button>
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="扫描"
+                    android:id="@+id/scan"></Button>
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="扫描2"
+                    android:id="@+id/scan2"></Button>
             </LinearLayout>
         </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
