@@ -7,7 +7,7 @@ import com.zhongpin.mvvm_android.network.initiateRequest
 
 class HomeFragmentViewModel  : BaseViewModel<HomeRepository>() {
 
-    var mBannerData: MutableLiveData<List<UserInfoResponse>> = MutableLiveData()
+    var mBannerData: MutableLiveData<List<UserInfoResponse>?> = MutableLiveData()
     fun loadBannerCo() {
         initiateRequest({
             mBannerData.value = mRepository.loadBannerCo()

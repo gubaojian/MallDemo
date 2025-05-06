@@ -1,0 +1,28 @@
+package com.zhongpin.mvvm_android.ui.mine.company.detail
+
+import androidx.lifecycle.MutableLiveData
+import com.zhongpin.mvvm_android.base.repository.BaseRepository
+import com.zhongpin.mvvm_android.base.viewstate.State
+import com.zhongpin.mvvm_android.bean.IdCardInfoResponse
+import com.zhongpin.mvvm_android.bean.UserInfoAuthResponse
+import com.zhongpin.mvvm_android.bean.UserInfoResponse
+import com.zhongpin.mvvm_android.network.BaseResponse
+import com.zhongpin.mvvm_android.network.dataConvert
+import com.zhongpin.mvvm_android.network.requireLogin
+import com.zhongpin.mvvm_android.network.showLoadingState
+import com.zhongpin.mvvm_android.network.showLoadingStateRequireLogin
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
+
+
+class CompanyDetailRepository(private val loadState: MutableLiveData<State>): BaseRepository() {
+
+    suspend fun getUserAuthInfo(): BaseResponse<UserInfoAuthResponse> {
+        return apiService.getUserAuthInfo().requireLogin().showLoadingState(loadState)
+    }
+
+    suspend fun deleteEntInfoAuth(id: Long): BaseResponse<Boolean> {
+        return apiService.deleteEntInfoAuth(id)
+    }
+}

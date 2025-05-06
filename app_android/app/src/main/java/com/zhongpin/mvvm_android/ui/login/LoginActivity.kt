@@ -15,9 +15,11 @@ import androidx.appcompat.app.AlertDialog
 import com.blankj.utilcode.util.SPUtils
 import com.zhongpin.app.BuildConfig
 import com.zhongpin.app.databinding.ActivityLoginBinding
+import com.zhongpin.lib_base.utils.EventBusUtils
 import com.zhongpin.lib_base.view.LoadingDialog
 import com.zhongpin.mvvm_android.base.view.BaseVMActivity
 import com.zhongpin.mvvm_android.bean.LoginEvent
+import com.zhongpin.mvvm_android.bean.TokenExpiredEvent
 import com.zhongpin.mvvm_android.common.utils.Constant
 import com.zhongpin.mvvm_android.common.utils.StatusBarUtil
 import com.zhongpin.mvvm_android.ui.find.FindPwdActivity
@@ -51,7 +53,10 @@ class LoginActivity : BaseVMActivity<LoginViewModel>() {
         })
         super.initView()
         StatusBarUtil.setMargin(this, mBinding.content)
-        mBinding.ivBack.setOnClickListener { finish() }
+        mBinding.ivBack.setOnClickListener {
+            EventBusUtils.postEvent(LoginEvent(false))
+            finish()
+        }
         mBinding.btnLogin.setOnClickListener {
             loginAndCheck()
         }
@@ -186,14 +191,14 @@ class LoginActivity : BaseVMActivity<LoginViewModel>() {
                         SPUtils.getInstance().put(Constant.LOGIN_MOBILE_KEY, it.token)
 
                         Toast.makeText(applicationContext,"登录成功", Toast.LENGTH_LONG).show()
-                        EventBus.getDefault().post(LoginEvent(true))
+                        EventBusUtils.postEvent(LoginEvent(true))
                         finish()
                     }
                 } else {
                     if (it.code == 406) {
                         mBinding.loginTooManyContainer.visibility = View.VISIBLE
                     }
-                    EventBus.getDefault().post(LoginEvent(false))
+                    EventBusUtils.postEvent(LoginEvent(false))
                     Toast.makeText(applicationContext,"登录失败," + it.msg, Toast.LENGTH_LONG).show()
                 }
             }

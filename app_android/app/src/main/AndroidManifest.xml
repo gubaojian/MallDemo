@@ -73,6 +73,43 @@
             android:screenOrientation="portrait"
             android:exported="false"
             android:theme="@style/Theme.Mall" />
+
+        <activity
+            android:name="com.zhongpin.mvvm_android.ui.mine.company.CompanyListActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"
+            android:theme="@style/Theme.White" />
+
+        <activity
+            android:name="com.zhongpin.mvvm_android.ui.mine.company.detail.CompanyDetailActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"
+            android:theme="@style/Theme.White" />
+
+        <activity
+            android:name="com.zhongpin.mvvm_android.ui.mine.company.edit.EditCompanyVerifyActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustResize"
+            android:exported="false"
+            android:theme="@style/Theme.Verify" />
+
+        <activity
+            android:name="com.zhongpin.mvvm_android.ui.mine.company.shouhuo.AddressListActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"
+            android:theme="@style/Theme.White" />
+        <activity
+            android:name="com.zhongpin.mvvm_android.ui.mine.company.shouhuo.add.AddReceiveAddressActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustResize"
+            android:exported="false"
+            android:theme="@style/Theme.Verify" />
+        <activity
+            android:name="com.zhongpin.mvvm_android.ui.mine.company.shouhuo.edit.EditReceiveAddressActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustResize"
+            android:exported="false"
+            android:theme="@style/Theme.Verify" />
     </application>
     <queries package="${applicationId}">
         <intent>

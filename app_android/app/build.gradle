@@ -3,6 +3,12 @@ plugins {
     alias(libs.plugins.kotlin.android)
 }
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('keystore/key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace 'com.zhongpin.app'
     compileSdk 34
@@ -22,12 +28,48 @@ android {
         }
     }
 
-    buildTypes {
+    signingConfigs {
         release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? rootProject.file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+
+        debug {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? rootProject.file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    // 重命名 apk
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            if (variant.buildType.name == "release") {
+                // 获取版本
+                def versionName = variant.versionName
+                def versionCode = variant.versionCode
+                // 设置新名称
+                def newApkName = "app_v${versionName}_${versionCode}.apk"
+                outputFileName = new File(newApkName)
+            }
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -170,10 +212,13 @@ dependencies {
     implementation 'io.github.jeremyliao:live-event-bus-x:1.8.0'
 
     //https://github.com/Baseflow/PhotoView
-    implementation 'com.github.chrisbanes:PhotoView:2.0.0'
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 
 
     //https://github.com/journeyapps/zxing-android-embedded
     //https://blog.csdn.net/qq_29848853/article/details/131057600
     implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
+
+    //https://github.com/hdodenhof/CircleImageView
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
 }

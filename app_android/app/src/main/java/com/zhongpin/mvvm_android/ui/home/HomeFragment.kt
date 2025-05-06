@@ -14,8 +14,13 @@ import com.zhongpin.mvvm_android.bean.UserInfoResponse
 import com.zhongpin.mvvm_android.common.utils.Constant
 import com.zhongpin.mvvm_android.common.utils.StatusBarUtil
 import com.zhongpin.app.databinding.FragmentHomeBinding
+import com.zhongpin.lib_base.utils.ActivityStackManager
 import com.zhongpin.lib_base.utils.EventBusRegister
+import com.zhongpin.lib_base.utils.EventBusUtils
+import com.zhongpin.mvvm_android.MainActivity
 import com.zhongpin.mvvm_android.bean.LoginEvent
+import com.zhongpin.mvvm_android.bean.TokenExpiredEvent
+import com.zhongpin.mvvm_android.common.login.LoginUtils
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import com.zhongpin.mvvm_android.base.view.BaseVMFragment as BaseVMFragment
@@ -80,7 +85,6 @@ class HomeFragment : BaseVMFragment<HomeFragmentViewModel>() {
     override fun initData() {
         super.initData()
         mViewModel.loadBannerCo()
-
         /**
         Handler().postDelayed({
             mViewModel.loadSeckillGoodsData()
@@ -89,15 +93,15 @@ class HomeFragment : BaseVMFragment<HomeFragmentViewModel>() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onRefreshUser(loginEvent : LoginEvent){
-        if (loginEvent.isLogin) {
-            initData();
-        }
+        initData();
     }
 
     override fun initDataObserver() {
         mViewModel.mBannerData.observe(viewLifecycleOwner, Observer {
             showSuccess(Constant.COMMON_KEY)
-            setBannerData(it)
+            it?.let {
+                setBannerData(it)
+            }
             //showLoading("dddd")
             //showError("dddd", "dddd")
         })

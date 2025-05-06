@@ -15,9 +15,14 @@ import com.zhongpin.mvvm_android.base.view.BaseActivity
 import com.zhongpin.mvvm_android.common.utils.Constant
 import com.zhongpin.mvvm_android.common.utils.StatusBarUtil
 import com.zhongpin.app.databinding.ActivityMainBinding
+import com.zhongpin.lib_base.utils.ActivityStackManager
+import com.zhongpin.mvvm_android.bean.TokenExpiredEvent
+import com.zhongpin.mvvm_android.common.login.LoginUtils
 import com.zhongpin.mvvm_android.ui.test.SettingFragment
 import com.zhongpin.mvvm_android.ui.home.HomeFragment
 import com.zhongpin.mvvm_android.ui.me.MineFragment
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 //import com.zwb.mvvm_mall.ui.cart.view.CartFragment
 //import com.zwb.mvvm_mall.ui.classify.view.ClassifyFragment
@@ -51,6 +56,15 @@ class MainActivity  : BaseActivity() {
         switchFragment(Constant.HOME)
         initBottomNavigation()
         initTabs()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onRefreshUser(tokenEvent : TokenExpiredEvent){
+        if (tokenEvent.isExpired) {
+            LoginUtils.clearToken()
+            ActivityStackManager.backToSpecifyActivity(MainActivity::class.java)
+            LoginUtils.toLogin(this)
+        }
     }
 
     private fun initTabs() {

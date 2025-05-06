@@ -39,7 +39,6 @@
 -keep class com.luck.picture.lib.** { *; }
 
 
-
 # glide
 -keep public class * implements com.bumptech.glide.module.GlideModule
 -keep public class * extends com.bumptech.glide.module.AppGlideModule
@@ -50,3 +49,8 @@
 
 -dontwarn com.lxj.xpopup.widget.**
 -keep class com.lxj.xpopup.widget.**{*;}
+
+## bean
+-keep class com.zhongpin.mvvm_android.bean.** {
+     *;
+}

@@ -19,8 +19,10 @@ import com.zhongpin.lib_base.utils.EventBusRegister
 import com.zhongpin.mvvm_android.base.view.BaseVMFragment
 import com.zhongpin.mvvm_android.bean.LoginEvent
 import com.zhongpin.mvvm_android.bean.UserInfoResponse
+import com.zhongpin.mvvm_android.common.login.LoginUtils
 import com.zhongpin.mvvm_android.common.utils.StatusBarUtil
 import com.zhongpin.mvvm_android.ui.login.LoginActivity
+import com.zhongpin.mvvm_android.ui.mine.company.CompanyListActivity
 import com.zhongpin.mvvm_android.ui.photo.preview.PhonePreviewerActivity
 import com.zhongpin.mvvm_android.ui.scan.ScanCaptureActivity
 import com.zhongpin.mvvm_android.ui.verify.company.CompanyVerifyActivity
@@ -86,6 +88,13 @@ class MineFragment : BaseVMFragment<MineViewModel>() {
         binding.entVerify.setOnClickListener {
             val intent = Intent(activity, CompanyVerifyActivity::class.java)
             startActivity(intent)
+        }
+
+        binding.companyList.setOnClickListener {
+            LoginUtils.ensureLogin(activity) {
+                val intent = Intent(activity, CompanyListActivity::class.java)
+                startActivity(intent)
+            }
         }
 
         binding.photo.setOnClickListener {

@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
+import com.github.gzuliyujiang.wheelpicker.OptionPicker
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.engine.CompressFileEngine
@@ -25,6 +26,7 @@ import com.zhongpin.lib_base.utils.LogUtils
 import com.zhongpin.lib_base.view.LoadingDialog
 import com.zhongpin.mvvm_android.base.view.BaseVMActivity
 import com.zhongpin.mvvm_android.photo.selector.GlideEngine
+import com.zhongpin.mvvm_android.ui.common.CompanyTypes
 import com.zhongpin.mvvm_android.ui.verify.company.CompanyVerifyActivity
 import top.zibin.luban.Luban
 import top.zibin.luban.OnNewCompressListener
@@ -212,7 +214,9 @@ class PersonVerifyActivity : BaseVMActivity<PersonVerifyViewModel>() {
                 })
         }
 
-        val companyTypes = arrayOf("造纸厂", "纸板厂", "纸箱厂", "耗材厂商", "纸箱使用单位")
+
+        val companyTypes = CompanyTypes.companyTypes
+        /**
         mBinding.chooseCompanyTypeContainer.setOnClickListener {
             val builder: AlertDialog.Builder = AlertDialog.Builder(this)
             builder.setTitle("选择单位类别")
@@ -230,6 +234,17 @@ class PersonVerifyActivity : BaseVMActivity<PersonVerifyViewModel>() {
             // 显示对话框
             val dialog: AlertDialog = builder.create()
             dialog.show()
+        }*/
+
+        mBinding.chooseCompanyTypeContainer.setOnClickListener {
+            val picker = OptionPicker(this)
+            picker.setTitle("请选择单位类别")
+            picker.setData(companyTypes.toList())
+            picker.setOnOptionPickedListener { position, item ->
+                mBinding.chooseCompanyTypeText.text = companyTypes[position]
+                selectCompanyType = position
+            }
+            picker.show()
         }
 
     }

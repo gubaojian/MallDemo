@@ -26,17 +26,24 @@ import com.luck.picture.lib.interfaces.OnKeyValueResultCallbackListener
 import com.luck.picture.lib.interfaces.OnResultCallbackListener
 import com.zhongpin.app.BuildConfig
 import com.zhongpin.app.databinding.ActivityCompanyVerifyBinding
+import com.zhongpin.lib_base.utils.EventBusUtils
 import com.zhongpin.lib_base.utils.LogUtils
 import com.zhongpin.lib_base.view.LoadingDialog
 import com.zhongpin.mvvm_android.base.view.BaseVMActivity
+import com.zhongpin.mvvm_android.bean.CompanyInfoChangeEvent
+import com.zhongpin.mvvm_android.bean.CompanyListItemResponse
 import com.zhongpin.mvvm_android.bean.EntInfoResponse
 import com.zhongpin.mvvm_android.bean.LatLntResponse
 import com.zhongpin.mvvm_android.photo.selector.GlideEngine
+import com.zhongpin.mvvm_android.ui.utils.AreaUtil
 import top.zibin.luban.Luban
 import top.zibin.luban.OnNewCompressListener
 import java.io.File
 
 
+/**
+ * 添加企业认证
+ * */
 class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddressPickedListener {
 
 
@@ -47,10 +54,16 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
     private var yingYeZhiZhaoUrl:String? = null;
     private var latLntResponse: LatLntResponse? = null
 
+    private var from: String? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         //android:windowSoftInputMode="adjustResize"
         // 键盘view整体上移，暂时不用沉浸式导航栏
         //StatusBarUtil.immersive(this)
+        if (intent != null) {
+            from = intent.getStringExtra("from") ?: ""
+        }
         super.onCreate(savedInstanceState)
     }
 
@@ -145,8 +158,7 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
             picker.setDefaultValue("", "", "")
             picker.setOnAddressPickedListener(this)
             picker.wheelLayout.setOnLinkageSelectedListener { first, second, third ->
-                picker.titleView.text = String.format(
-                    "%s%s%s",
+                picker.titleView.text = AreaUtil.toArea(
                     picker.firstWheelView.formatItem(first),
                     picker.secondWheelView.formatItem(second),
                     picker.thirdWheelView.formatItem(third)
@@ -195,7 +207,7 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
                 //update info
                 updateEntImage(filePath)
             } else {
-                Toast.makeText(applicationContext,"身份证信息识别失败," + outerIt.msg, Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext,"信息识别失败," + outerIt.msg, Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -307,17 +319,14 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
         val receiveAddress:HashMap<String,Any?> = hashMapOf()
         receiveAddress["name"] = mBinding.editShouHuoName.text.trim().toString()
         receiveAddress["mobile"] = mBinding.editShouHuoShouJi.text.trim().toString()
-        if (!mBinding.chooseShouhuoAreaText.text.toString().contains("请选择")) {
-            receiveAddress["address"] = mBinding.chooseShouhuoAreaText.text.trim()
-                .toString() + mBinding.editShouHuoDetail.text.trim().toString()
-        }
+        receiveAddress["address"] = mBinding.editShouHuoDetail.text.trim().toString()
         receiveAddress["abbr"] = mBinding.editShouHuoShort.text.trim().toString()
 
         if (mBinding.chooseJingweiduEditText.text.isNotEmpty()) {
             val lntlats = mBinding.chooseJingweiduEditText.text.trim().toString().split("/")
             if(lntlats.size == 2) {
-                receiveAddress["latitude"] = lntlats[0]
-                receiveAddress["longitude"] =  lntlats[1]
+                receiveAddress["longitude"] =  lntlats[0]
+                receiveAddress["latitude"] = lntlats[1]
             } else {
                 dismissLoadingDialog()
                 Toast.makeText(applicationContext, "经度/纬度，格式度不合法", Toast.LENGTH_LONG).show()
@@ -327,25 +336,44 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
         receiveAddress["province"] = mProvince?.name
         receiveAddress["city"] = mCity?.name
         receiveAddress["region"] = mCounty?.name
-
         parameter["receiveAddressList"] = arrayOf(receiveAddress);
 
         mViewModel.submitEntInfoAuth(parameter).observe(this) {
             dismissLoadingDialog()
             if (it.success) {
-                showTipDialog()
+                EventBusUtils.postEvent(CompanyInfoChangeEvent(true))
+                if (TextUtils.isEmpty(from)) {
+                    showTipDialogFromRegister()
+                } else {
+                    showTipDialogFromMine()
+                }
             } else {
                 Toast.makeText(applicationContext,"提交失败 " + it.msg, Toast.LENGTH_LONG).show()
             }
         }
     }
 
-    fun showTipDialog() {
+    fun showTipDialogFromRegister() {
         val builder = AlertDialog.Builder(this@CompanyVerifyActivity)
         builder.setTitle("信息提交成功")
-        builder.setMessage("您填写的个人实名认证信息已提交，\n" +
+        builder.setMessage("您填写的企业实名认证信息已提交，\n" +
                 "请等待人工审核。\n" +
                 "如需认证企业，可在“我的-我的企业-添加企业”中重新申请认证。")
+        builder.setPositiveButton("我知道了", object: DialogInterface.OnClickListener{
+            override fun onClick(dialog: DialogInterface?, which: Int) {
+                finish()
+            }
+
+        })
+        builder.show()
+    }
+
+    fun showTipDialogFromMine() {
+        val builder = AlertDialog.Builder(this@CompanyVerifyActivity)
+        builder.setTitle("信息提交成功")
+        builder.setMessage("您填写的企业实名认证信息已提交，\n" +
+                "请等待人工审核。\n" +
+                "如需认证企业，可在“我的-我的企业”中重新申请认证。")
         builder.setPositiveButton("我知道了", object: DialogInterface.OnClickListener{
             override fun onClick(dialog: DialogInterface?, which: Int) {
                 finish()
@@ -366,8 +394,7 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
 
         //Toast.makeText(this, province.toString() + " " + city + " " + county, Toast.LENGTH_SHORT).show()
 
-        val address = String.format(
-            "%s%s%s",
+        val address = AreaUtil.toArea(
             province.name,
             city.name,
             county.name

@@ -4,6 +4,7 @@ import com.google.gson.JsonElement
 import com.zhongpin.mvvm_android.bean.*
 import okhttp3.MultipartBody
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
@@ -18,6 +19,7 @@ interface ApiService {
 
 
     @GET(USER_INFO)
+    @Deprecated("已废弃")
     suspend fun getUserInfoCo(): BaseResponse<List<UserInfoResponse>>
 
     @GET(USER_INFO)
@@ -62,6 +64,13 @@ interface ApiService {
     @POST(SUBMIT_ENT_INFO_AUTH)
     suspend fun submitEntInfoAuth(@Body parameters:HashMap<String,Any>): BaseResponse<Boolean>
 
+    @POST(EDIT_ENT_INFO_AUTH)
+    suspend fun editEntInfoAuth(@Body parameters:HashMap<String,Any>): BaseResponse<Boolean>
+
+    @GET(DELETE_ENT_INFO_AUTH)
+    suspend fun deleteEntInfoAuth(@Query("id") id: Long): BaseResponse<Boolean>
+
+
 
     @GET(SELECT_ADDRESS_POI_INFO)
     suspend fun getLntLngInfo(@Query("address") address: String): BaseResponse<LatLntResponse>
@@ -70,6 +79,28 @@ interface ApiService {
     @Multipart
     @POST(ENT_INFO_IDENTIFY)
     suspend fun identifyEntCard(@Part file: MultipartBody.Part): BaseResponse<EntInfoResponse>
+
+
+    @POST(COMPANY_LIST)
+    suspend fun getCompanyList(@Body parameters:HashMap<String,Any>): BaseResponse<CompanyListResponse>
+
+    @GET(USER_AUTH_INFO)
+    suspend fun getUserAuthInfo(): BaseResponse<UserInfoAuthResponse>
+
+    @GET(ADDRESS_LIST)
+    suspend fun getEntReceiveAddressList(@Query("entId") entId: Long): BaseResponse<List<AddressListItemResponse>>
+
+    @POST(ADD_RECEIVE_ADDRESS)
+    suspend fun addReceiveAddress(@Body parameters:HashMap<String,Any>): BaseResponse<Boolean>
+
+
+    @POST(UPDATE_RECEIVE_ADDRESS)
+    suspend fun updateReceiveAddress(@Body parameters:HashMap<String,Any>): BaseResponse<Boolean>
+
+
+    @GET(DELETE_RECEIVE_ADDRESS)
+    suspend fun deleteReceiveAddress(@Query("id") id: Long): BaseResponse<Boolean>
+
 
 
     /**
@@ -101,7 +132,6 @@ interface ApiService {
 
     @GET("$PROJECT/goods/getFilterAttrs")
     suspend fun getFilterAttrs() : BaseResponse<List<GoodsAttrFilterEntity>>
-
     */
 
     companion object {
@@ -120,21 +150,32 @@ interface ApiService {
         //提交企业认证
         const val SUBMIT_ENT_INFO_AUTH = "/mini/submitEntInfoAuth"
 
+        const val EDIT_ENT_INFO_AUTH = "/mini/updateEntInfoAuth"
+        const val DELETE_ENT_INFO_AUTH = "/mini/deleteEntInfoAuth"
+
+
         //获取经纬度
         const val SELECT_ADDRESS_POI_INFO = "/mini/selectExactInfo"
 
         const val ENT_INFO_IDENTIFY = "/mini/identify"
 
 
-        //send code
-        const val VALID_CODE_URL = "${HOST_URL}/mbff/validateSmsByForgot"
+        const val COMPANY_LIST = "/mini/selectEntInfoAuthPage"
 
-        const val CHANGE_PASSWORD_URL = HOST_URL +"/mbff/passwordByForgot"
 
-        const val User_Info_Url = HOST_URL +"/mbff/social/user/info"
+        const val ADDRESS_LIST = "/mini/selectReceiveAddressList"
 
-        const val ALITOKEN_URL = HOST_URL + "/mbff/getAliFusionAuthToken"
-        const val FusionLogin_URL = HOST_URL +"/mbff/verifyAliFusionAuthToken"
+
+        const val ADD_RECEIVE_ADDRESS = "/mini/addReceiveAddress"
+
+        const val UPDATE_RECEIVE_ADDRESS = "/mini/updateReceiveAddress"
+
+        const val DELETE_RECEIVE_ADDRESS = "/mini/deleteReceiveAddress"
+
+
+
+        const val USER_AUTH_INFO = "/mini/selectUserInfoAuth"
+
     }
 
 }

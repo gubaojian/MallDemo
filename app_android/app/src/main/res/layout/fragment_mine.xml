@@ -48,6 +48,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
+                    android:text="企业列表"
+                    android:id="@+id/companyList"></Button>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
                     android:text="图片查看器"
                     android:id="@+id/photo"></Button>
                 <Button

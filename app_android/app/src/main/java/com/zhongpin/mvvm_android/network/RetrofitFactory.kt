@@ -1,4 +1,6 @@
 package com.zhongpin.mvvm_android.network
+import com.blankj.utilcode.util.AppUtils
+import com.blankj.utilcode.util.DeviceUtils
 import com.zhongpin.lib_base.utils.LogUtils
 import com.blankj.utilcode.util.SPUtils
 import com.zhongpin.app.BuildConfig
@@ -11,6 +13,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.UnsupportedEncodingException
 import java.net.URLDecoder
+import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
 
 
@@ -97,10 +100,17 @@ class RetrofitFactory private constructor() {
 
     private fun initCommonInterceptor(): Interceptor {
         return Interceptor { chain ->
+            val deviceNameStr = DeviceUtils.getManufacturer().plus("_")
+                .plus(DeviceUtils.getModel())
             val request = chain.request()
                 .newBuilder()
                 .addHeader("Content-Type", "application/json")
                 .addHeader("charset", "UTF-8")
+                .addHeader("device-type", "android")
+                .addHeader("app-version", AppUtils.getAppVersionName())
+                .addHeader("device-id", DeviceUtils.getUniqueDeviceId())
+                .addHeader("device-os-version", DeviceUtils.getSDKVersionName().toString())
+                .addHeader("device-name",  URLEncoder.encode(deviceNameStr, "UTF-8"))
                 .build()
             chain.proceed(request)
         }
