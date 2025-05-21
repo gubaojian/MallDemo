@@ -1,7 +1,6 @@
 package com.zhongpin.mvvm_android.ui.verify.person
 
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -11,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
 import com.github.gzuliyujiang.wheelpicker.OptionPicker
 import com.luck.picture.lib.basic.PictureSelector
@@ -26,7 +24,7 @@ import com.zhongpin.lib_base.utils.LogUtils
 import com.zhongpin.lib_base.view.LoadingDialog
 import com.zhongpin.mvvm_android.base.view.BaseVMActivity
 import com.zhongpin.mvvm_android.photo.selector.GlideEngine
-import com.zhongpin.mvvm_android.ui.common.CompanyTypes
+import com.zhongpin.mvvm_android.ui.common.CompanyConfigData
 import com.zhongpin.mvvm_android.ui.verify.company.CompanyVerifyActivity
 import top.zibin.luban.Luban
 import top.zibin.luban.OnNewCompressListener
@@ -62,6 +60,9 @@ class PersonVerifyActivity : BaseVMActivity<PersonVerifyViewModel>() {
     }
 
     override fun initView() {
+        mViewModel.loadState.observe(this, {
+            dismissLoadingDialog()
+        })
         super.initView()
         //StatusBarUtil.setMargin(this, mBinding.content)
         mLoadingDialog = LoadingDialog(this, false)
@@ -215,7 +216,7 @@ class PersonVerifyActivity : BaseVMActivity<PersonVerifyViewModel>() {
         }
 
 
-        val companyTypes = CompanyTypes.companyTypes
+        val companyTypes = CompanyConfigData.companyTypes
         /**
         mBinding.chooseCompanyTypeContainer.setOnClickListener {
             val builder: AlertDialog.Builder = AlertDialog.Builder(this)
@@ -240,6 +241,7 @@ class PersonVerifyActivity : BaseVMActivity<PersonVerifyViewModel>() {
             val picker = OptionPicker(this)
             picker.setTitle("请选择单位类别")
             picker.setData(companyTypes.toList())
+            picker.setDefaultPosition(selectCompanyType)
             picker.setOnOptionPickedListener { position, item ->
                 mBinding.chooseCompanyTypeText.text = companyTypes[position]
                 selectCompanyType = position

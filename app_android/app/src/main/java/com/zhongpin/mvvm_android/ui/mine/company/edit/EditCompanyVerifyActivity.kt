@@ -37,6 +37,7 @@ import com.zhongpin.mvvm_android.bean.CompanyListItemResponse
 import com.zhongpin.mvvm_android.bean.EntInfoResponse
 import com.zhongpin.mvvm_android.bean.LatLntResponse
 import com.zhongpin.mvvm_android.photo.selector.GlideEngine
+import com.zhongpin.mvvm_android.ui.utils.IntentUtils
 import top.zibin.luban.Luban
 import top.zibin.luban.OnNewCompressListener
 import java.io.File
@@ -63,7 +64,7 @@ class EditCompanyVerifyActivity : BaseVMActivity<EditCompanyVerifyViewModel>() {
         // 键盘view整体上移，暂时不用沉浸式导航栏
         //StatusBarUtil.immersive(this)
         if (intent != null) {
-            companyListItem = intent.getSerializableExtra("companyListItem", CompanyListItemResponse::class.java)
+            companyListItem = IntentUtils.getSerializableExtra(intent, "companyListItem", CompanyListItemResponse::class.java)
         }
         super.onCreate(savedInstanceState)
     }
@@ -76,6 +77,9 @@ class EditCompanyVerifyActivity : BaseVMActivity<EditCompanyVerifyViewModel>() {
     }
 
     override fun initView() {
+        mViewModel.loadState.observe(this, {
+            dismissLoadingDialog()
+        })
         super.initView()
         //StatusBarUtil.setMargin(this, mBinding.content)
         mLoadingDialog = LoadingDialog(this, false)

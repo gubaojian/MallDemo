@@ -94,22 +94,113 @@
             android:theme="@style/Theme.Verify" />
 
         <activity
-            android:name="com.zhongpin.mvvm_android.ui.mine.company.shouhuo.AddressListActivity"
+            android:name="com.zhongpin.mvvm_android.ui.mine.company.dizhi.AddressListActivity"
             android:screenOrientation="portrait"
             android:exported="false"
             android:theme="@style/Theme.White" />
         <activity
-            android:name="com.zhongpin.mvvm_android.ui.mine.company.shouhuo.add.AddReceiveAddressActivity"
+            android:name="com.zhongpin.mvvm_android.ui.mine.company.dizhi.add.AddReceiveAddressActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateVisible|adjustResize"
             android:exported="false"
             android:theme="@style/Theme.Verify" />
         <activity
-            android:name="com.zhongpin.mvvm_android.ui.mine.company.shouhuo.edit.EditReceiveAddressActivity"
+            android:name="com.zhongpin.mvvm_android.ui.mine.company.dizhi.edit.EditReceiveAddressActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateVisible|adjustResize"
             android:exported="false"
             android:theme="@style/Theme.Verify" />
+        <activity
+            android:name="com.zhongpin.mvvm_android.ui.notify.setting.NotifySettingActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"
+            android:theme="@style/Theme.White" />
+
+        <activity
+            android:name="com.zhongpin.mvvm_android.ui.shouhuo.ConfirmShuoHuoActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"
+            android:theme="@style/Theme.Green" />
+
+        <activity
+            android:name="com.zhongpin.mvvm_android.ui.shouhuo.result.ShuoHuoSuccessActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"
+            android:theme="@style/Theme.Green" />
+
+
+        <activity
+            android:name="com.zhongpin.mvvm_android.ui.feedback.PingZhiFeedbackActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"
+            android:theme="@style/Theme.White" />
+
+        <activity
+            android:name="com.zhongpin.mvvm_android.ui.feedback.chooseorder.FeedbackChooseOrderActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"
+            android:theme="@style/Theme.White" />
+
+        <activity
+            android:name="com.zhongpin.mvvm_android.ui.order.detail.OrderDetailActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"
+            android:theme="@style/Theme.White" />
+
+        <activity
+            android:name="com.zhongpin.mvvm_android.ui.order.fahuodetail.FaHuoDetailActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"
+            android:theme="@style/Theme.White" />
+
+        <activity
+            android:name="com.zhongpin.mvvm_android.ui.buy.PublishBuyActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"
+            android:theme="@style/Theme.White" />
+
+        <activity
+            android:name="com.zhongpin.mvvm_android.ui.buy.detail.PublishBuyDetailActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"
+            android:theme="@style/Theme.White" />
+
+        <activity
+            android:name="com.zhongpin.mvvm_android.ui.buy.edit.EditPublishBuyDetailActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"
+            android:theme="@style/Theme.White" />
+
+        <activity
+            android:name="com.zhongpin.mvvm_android.ui.buy.add.AddPublishBuyDetailActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"
+            android:theme="@style/Theme.White" />
+
+        <activity
+            android:name="com.zhongpin.mvvm_android.ui.order.search.list.OrderSearchListActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"
+            android:theme="@style/Theme.White" />
+
+        <activity
+            android:name="com.zhongpin.mvvm_android.ui.order.search.OrderSearchQueryActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"
+            android:theme="@style/Theme.White" />
+
+        <activity
+            android:name="com.zhongpin.mvvm_android.ui.debug.DebugActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"
+            android:theme="@style/Theme.White" />
+
+
+        <service android:name="com.zhongpin.mvvm_android.service.NotificationService"
+            android:foregroundServiceType="remoteMessaging"
+            android:exported="false"></service>
+
+
     </application>
     <queries package="${applicationId}">
         <intent>
@@ -128,7 +219,9 @@
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.VIBRATE" />

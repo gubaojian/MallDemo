@@ -7,14 +7,9 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter4.BaseQuickAdapter
-import com.youth.banner.indicator.CircleIndicator
-import com.zhongpin.app.R
 import com.zhongpin.app.R.*
-import com.zhongpin.mvvm_android.bean.UserInfoResponse
-import com.zhongpin.app.databinding.HomeHeaderViewItemBinding
 import com.zhongpin.app.databinding.ListCompanyItemBinding
 import com.zhongpin.mvvm_android.bean.CompanyListItemResponse
-import com.zhongpin.mvvm_android.ui.home.GlideBannerImageAdapter
 
 class CompanyListAdapter(val mActivity: AppCompatActivity, data: MutableList<CompanyListItemResponse>)
     : BaseQuickAdapter<CompanyListItemResponse, CompanyListAdapter.VH>(data) {

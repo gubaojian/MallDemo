@@ -6,8 +6,10 @@ import com.zhongpin.mvvm_android.base.viewstate.State
 import com.zhongpin.mvvm_android.bean.CompanyListResponse
 import com.zhongpin.mvvm_android.bean.IdCardInfoResponse
 import com.zhongpin.mvvm_android.bean.UserInfoResponse
+import com.zhongpin.mvvm_android.common.utils.Constant
 import com.zhongpin.mvvm_android.network.BaseResponse
 import com.zhongpin.mvvm_android.network.dataConvert
+import com.zhongpin.mvvm_android.network.requireLogin
 import com.zhongpin.mvvm_android.network.showLoadingState
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -21,7 +23,7 @@ class CompanyListRepository(private val loadState: MutableLiveData<State>): Base
         return apiService.getCompanyList(hashMapOf(
             "pageNo" to pageNo,
             "pageSize" to 20
-        )).showLoadingState(loadState)
+        )).requireLogin().showLoadingState(loadState, Constant.COMMON_KEY)
     }
 
 

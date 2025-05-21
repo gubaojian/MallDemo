@@ -103,39 +103,7 @@ interface ApiService {
 
 
 
-    /**
-    @GET("$PROJECT/home/getGoodsClass")
-    suspend fun getGoodsClassCo() : BaseResponse<List<ClassifyEntity>>
-
-    @GET("$PROJECT/home/getSeckillGoodsList")
-    suspend fun getSeckillGoodsList() : BaseResponse<List<GoodsEntity>>
-
-
-
-    @GET("$PROJECT/home/getBoutiqueGoodsList")
-    suspend fun getBoutiqueGoodsList() : BaseResponse<List<GoodsEntity>>
-
-    @GET("$PROJECT/home/getCartList")
-    suspend fun getCartList() : BaseResponse<List<CartGoodsEntity>>
-
-    @GET("$PROJECT/home/getSeckillGoodsList")
-    suspend fun getCartLikeGoods() : BaseResponse<List<CartLikeGoodsEntity>>
-
-    @GET("$PROJECT/search/getSearchTags")
-    suspend fun getSearchTags() : BaseResponse<List<SearchTagEntity>>
-
-    @GET("$PROJECT/search/getSearchHotTags")
-    suspend fun getSearchHotTags() : BaseResponse<List<SearchHotEntity>>
-
-    @GET("$PROJECT/comment/getCommentList")
-    suspend fun getCommentList() : BaseResponse<List<CommentEntity>>
-
-    @GET("$PROJECT/goods/getFilterAttrs")
-    suspend fun getFilterAttrs() : BaseResponse<List<GoodsAttrFilterEntity>>
-    */
-
     companion object {
-        const val HOST_URL = "https://dev.zwb.com"
         const val LOGIN = "/mini/login"
         const val REGISTER = "/mini/register"
         const val SEND_VERIFY_CODE = "/mini/sendCode"

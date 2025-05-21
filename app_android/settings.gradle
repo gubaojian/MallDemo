@@ -33,5 +33,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ZhongPin"
+rootProject.name = "ZhongPinDemo"
 include ':app'

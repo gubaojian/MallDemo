@@ -15,25 +15,25 @@ object EventBusUtils {
      * 订阅
      * @param subscriber 订阅者
      */
-    fun register(subscriber: Any) = EventBus.getDefault().register(subscriber)
+    @JvmStatic fun register(subscriber: Any) = EventBus.getDefault().register(subscriber)
 
     /**
      * 解除注册
      * @param subscriber 订阅者
      */
-    fun unRegister(subscriber: Any) = EventBus.getDefault().unregister(subscriber)
+    @JvmStatic fun unRegister(subscriber: Any) = EventBus.getDefault().unregister(subscriber)
 
     /**
      * 发送普通事件
      * @param event 事件
      */
-    fun postEvent(event: Any) = EventBus.getDefault().post(event)
+    @JvmStatic fun postEvent(event: Any) = EventBus.getDefault().post(event)
 
     /**
      * 发送粘性事件
      * @param stickyEvent 粘性事件
      */
-    fun postStickyEvent(stickyEvent: Any) = EventBus.getDefault().postSticky(stickyEvent)
+    @JvmStatic fun postStickyEvent(stickyEvent: Any) = EventBus.getDefault().postSticky(stickyEvent)
 
     /**
      * 手动获取粘性事件
@@ -41,7 +41,7 @@ object EventBusUtils {
      * @param <T>             事件泛型
      * @return 返回给定事件类型的最近粘性事件
      */
-    fun <T> getStickyEvent(stickyEventType: Class<T>): T =
+    @JvmStatic fun <T> getStickyEvent(stickyEventType: Class<T>): T =
         EventBus.getDefault().getStickyEvent(stickyEventType)
 
     /**
@@ -50,6 +50,6 @@ object EventBusUtils {
      * @param <T>             事件泛型
      * @return 返回给定事件类型的最近粘性事件
      */
-    fun <T> removeStickyEvent(stickyEventType: Class<T>): T =
+    @JvmStatic fun <T> removeStickyEvent(stickyEventType: Class<T>): T =
         EventBus.getDefault().removeStickyEvent(stickyEventType)
 }

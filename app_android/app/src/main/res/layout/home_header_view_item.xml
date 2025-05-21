@@ -8,8 +8,8 @@
         android:id="@+id/mBanner"
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        app:layout_collapseMode="parallax"
         android:layout_marginRight="8dp"
         android:layout_marginLeft="8dp"
+        app:layout_collapseMode="parallax"
         app:layout_collapseParallaxMultiplier="0.7" />
 </LinearLayout>

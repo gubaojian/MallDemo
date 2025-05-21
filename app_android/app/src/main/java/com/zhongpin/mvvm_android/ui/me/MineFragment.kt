@@ -1,50 +1,68 @@
 package com.zhongpin.mvvm_android.ui.me
 
 import android.app.Activity
+import android.app.PendingIntent
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Html
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import com.blankj.utilcode.util.AppUtils
+import com.blankj.utilcode.util.NotificationUtils
+import com.bumptech.glide.Glide
 import com.google.zxing.client.android.Intents
-import com.journeyapps.barcodescanner.CaptureActivity
 import com.scwang.smart.refresh.header.ClassicsHeader
+import com.zhongpin.app.BuildConfig
+import com.zhongpin.app.R
 import com.zhongpin.app.databinding.FragmentMineBinding
 import com.zhongpin.lib_base.utils.EventBusRegister
+import com.zhongpin.lib_base.utils.EventBusUtils
 import com.zhongpin.mvvm_android.base.view.BaseVMFragment
 import com.zhongpin.mvvm_android.bean.LoginEvent
+import com.zhongpin.mvvm_android.bean.TokenExpiredEvent
 import com.zhongpin.mvvm_android.bean.UserInfoResponse
+import com.zhongpin.mvvm_android.biz.utils.UserInfoUtil
 import com.zhongpin.mvvm_android.common.login.LoginUtils
+import com.zhongpin.mvvm_android.common.utils.Constant
 import com.zhongpin.mvvm_android.common.utils.StatusBarUtil
+import com.zhongpin.mvvm_android.service.UserNotificationUtil
+import com.zhongpin.mvvm_android.ui.buy.PublishBuyActivity
+import com.zhongpin.mvvm_android.ui.debug.DebugActivity
 import com.zhongpin.mvvm_android.ui.login.LoginActivity
 import com.zhongpin.mvvm_android.ui.mine.company.CompanyListActivity
+import com.zhongpin.mvvm_android.ui.notify.setting.NotifySettingActivity
 import com.zhongpin.mvvm_android.ui.photo.preview.PhonePreviewerActivity
 import com.zhongpin.mvvm_android.ui.scan.ScanCaptureActivity
+import com.zhongpin.mvvm_android.ui.shouhuo.result.ShuoHuoSuccessActivity
 import com.zhongpin.mvvm_android.ui.verify.company.CompanyVerifyActivity
 import com.zhongpin.mvvm_android.ui.verify.person.PersonVerifyActivity
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.util.concurrent.atomic.AtomicInteger
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
+ * Use the [MineFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
 @EventBusRegister
 class MineFragment : BaseVMFragment<MineViewModel>() {
-    // TODO: Rename and change types of parameters
+    private val ARG_PARAM1 = "param1"
+
     private var param1: String? = null
 
-    private lateinit var binding: FragmentMineBinding;
+    private lateinit var mBinding: FragmentMineBinding;
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,82 +73,89 @@ class MineFragment : BaseVMFragment<MineViewModel>() {
     }
 
     override fun createContentViewByBinding(inflater: LayoutInflater, container: ViewGroup?): View {
-        binding = FragmentMineBinding.inflate(layoutInflater, container, false)
-        val view = binding.root
+        mBinding = FragmentMineBinding.inflate(layoutInflater, container, false)
+        val view = mBinding.root
         return view
     }
 
 
     override fun initView() {
         super.initView()
-        StatusBarUtil.setMargin(activity, binding.content)
+        StatusBarUtil.setMargin(activity, mBinding.content)
 
-        binding.refreshLayout.setEnableRefresh(true)
-        binding.refreshLayout.setRefreshHeader(ClassicsHeader(getContext()))
-        binding.refreshLayout.setOnRefreshListener {
-            Handler(Looper.getMainLooper()).postDelayed(
-                {
-                    binding.refreshLayout.finishRefresh()
-                },
-                2000
-            )
-        }
-        binding.login.setOnClickListener {
-            val intent = Intent(activity, LoginActivity::class.java)
-            startActivity(intent)
-        }
-
-        binding.verify.setOnClickListener {
-            val intent = Intent(activity, PersonVerifyActivity::class.java)
-            startActivity(intent)
-        }
-
-        binding.entVerify.setOnClickListener {
-            val intent = Intent(activity, CompanyVerifyActivity::class.java)
-            startActivity(intent)
-        }
-
-        binding.companyList.setOnClickListener {
-            LoginUtils.ensureLogin(activity) {
-                val intent = Intent(activity, CompanyListActivity::class.java)
+        mBinding.versionName.text = "版本号：" + AppUtils.getAppVersionName()
+        if (BuildConfig.DEBUG) {
+            mBinding.versionName.setOnClickListener {
+                val intent = Intent(activity, DebugActivity::class.java)
                 startActivity(intent)
             }
         }
 
-        binding.photo.setOnClickListener {
-            val intent = Intent(activity, PhonePreviewerActivity::class.java)
-            intent.putExtra("imageUrls", arrayOf<String>(
-                "https://img.alicdn.com/bao/uploaded/i2/2268175280/O1CN01wvhOlY1osIBwjOCOP_!!2268175280.jpg_460x460q90.jpg_.webp",
-                "https://img.alicdn.com/bao/uploaded/i3/3928142771/O1CN01tzdOzK1WLANtDlnTJ_!!3928142771.jpg_460x460q90.jpg_.webp"))
+        mBinding.loginOut.setOnClickListener {
+            confirmLoginOut()
+        }
+
+        mBinding.notifySettingContainer.setOnClickListener {
+            val intent = Intent(activity, NotifySettingActivity::class.java)
             startActivity(intent)
         }
 
-        binding.scan.setOnClickListener {
-            val intent = Intent(activity, CaptureActivity::class.java)
-            startActivityForResult(intent, 100)
+        mBinding.myCompanyContainer.setOnClickListener {
+            val intent = Intent(activity, CompanyListActivity::class.java)
+            startActivity(intent)
         }
 
-        binding.scan2.setOnClickListener {
-            val intent = Intent(activity, ScanCaptureActivity::class.java)
-            startActivityForResult(intent, 100)
+        mBinding.fabuBuyContainer.setOnClickListener {
+            val intent = Intent(activity, PublishBuyActivity::class.java)
+            startActivity(intent)
         }
 
+        mBinding.companyAmount.text = HtmlCompat.fromHtml("已添加 <big><font color='#333333'><b>3</b></font></big> 家企业", HtmlCompat.FROM_HTML_MODE_LEGACY)
+
+        mBinding.publishBuyDesc.text = HtmlCompat.fromHtml("已发布 <big><font color='#333333'><b>2</b></font></big> 次采购", HtmlCompat.FROM_HTML_MODE_LEGACY)
+
+
+        mBinding.refreshLayout.setEnableRefresh(true)
+        mBinding.refreshLayout.setRefreshHeader(ClassicsHeader(requireActivity()))
+        mBinding.refreshLayout.setOnRefreshListener {
+            mViewModel.getUserInfo()
+        }
+        registerDefaultLoad(mBinding.content, Constant.COMMON_KEY)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
-            Toast.makeText(activity!!.applicationContext,"扫描结果," + data?.getStringExtra(Intents.Scan.RESULT), Toast.LENGTH_LONG).show()
 
-        }
+    override fun initDataObserver() {
+        mViewModel.mUserInfoData.observe(viewLifecycleOwner, Observer {
+            if (it.success) {
+                showSuccess(Constant.COMMON_KEY)
+                UserInfoUtil.userInfo = it.data
+                val userInfoResponse = it.data;
+                userInfoResponse?.let {
+                    if (!TextUtils.isEmpty(it.nickName)) {
+                        mBinding.userNick.text = it.nickName
+                        mBinding.userNick.visibility = View.VISIBLE;
+                    } else {
+                        mBinding.userNick.visibility = View.GONE;
+                    }
+                    mBinding.userPhone.text = "手机号：" + UserInfoUtil.maskPhone(it.mobile)
+                    if (!TextUtils.isEmpty(it.headImage)) {
+                        Glide.with(this@MineFragment)
+                            .load(it.headImage)
+                            .placeholder(mBinding.mineAvatar.drawable)
+                            .into(mBinding.mineAvatar)
+                    } else {
+                        mBinding.mineAvatar.setImageResource(R.mipmap.ic_user_default)
+                    }
+                }
+            }
+            mBinding.refreshLayout.finishRefresh()
+        })
     }
+
 
     override fun initData() {
-        mViewModel.getUserInfoCo()
-        /**
-        Handler().postDelayed({
-            mViewModel.loadSeckillGoodsData()
-        }, 2000)*/
+        super.initData()
+        mViewModel.getUserInfo()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -140,30 +165,26 @@ class MineFragment : BaseVMFragment<MineViewModel>() {
         }
     }
 
+    fun  confirmLoginOut() {
+        val builder = AlertDialog.Builder(requireActivity())
+        builder.setMessage("确认退出登录吗？")
+        builder.setNeutralButton("取消", object: DialogInterface.OnClickListener{
+            override fun onClick(dialog: DialogInterface?, which: Int) {
 
-    override fun initDataObserver() {
-        mViewModel.mUserInfoData.observe(viewLifecycleOwner, Observer {
-            setBannerData(it)
+            }
+
         })
+        builder.setPositiveButton("确认", object: DialogInterface.OnClickListener{
+            override fun onClick(dialog: DialogInterface?, which: Int) {
+                loginOut()
+            }
 
-        val nameObserver = Observer<String> { it ->
-            // Update the UI, in this case, a TextView.
-            //nameTextView.text = newName
-        }
-        /**
-        mViewModel.mSeckillGoods.observe(viewLifecycleOwner, Observer {
-            showSuccess(Constant.COMMON_KEY)
-            mHAdapter.setNewData(it)
-            mainRefreshLayout.finishRefresh()
-        })*/
+        })
+        builder.show()
     }
 
-    private fun setBannerData(list: UserInfoResponse) {
-        binding.text.setText("" + list.toString() + " \n " +   param1 + "test" )
-        //mHeaderView.mBanner.adapter = BannerImageAdapter(list)
-        //mHeaderView.mBanner.addBannerLifecycleObserver(this)
-        //mHeaderView.mBanner.indicator = CircleIndicator(activity)
-        //mHeaderView.mBanner.setBannerRound2(20f)
+    fun loginOut() {
+        EventBusUtils.postEvent(TokenExpiredEvent(true));
     }
 
 
@@ -176,7 +197,6 @@ class MineFragment : BaseVMFragment<MineViewModel>() {
          * @param param2 Parameter 2.
          * @return A new instance of fragment SettingFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String) =
             MineFragment().apply {

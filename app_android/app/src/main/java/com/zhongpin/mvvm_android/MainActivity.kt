@@ -1,28 +1,41 @@
 package com.zhongpin.mvvm_android
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.SparseArray
 import android.view.MenuItem
 import android.view.View
 import android.view.Window
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.viewModelScope
+import com.blankj.utilcode.util.NotificationUtils
+import com.hjq.permissions.OnPermissionCallback
+import com.hjq.permissions.Permission
+import com.hjq.permissions.XXPermissions
+import com.kongzue.tabbar.Tab
+import com.kongzue.tabbar.interfaces.OnTabChangeListener
 import com.zhongpin.app.R
 import com.zhongpin.app.R.*
-import com.kongzue.tabbar.Tab
-import com.kongzue.tabbar.TabBarView
-import com.kongzue.tabbar.interfaces.OnTabChangeListener
-import com.zhongpin.mvvm_android.base.view.BaseActivity
-import com.zhongpin.mvvm_android.common.utils.Constant
-import com.zhongpin.mvvm_android.common.utils.StatusBarUtil
 import com.zhongpin.app.databinding.ActivityMainBinding
 import com.zhongpin.lib_base.utils.ActivityStackManager
+import com.zhongpin.lib_base.utils.EventBusRegister
+import com.zhongpin.mvvm_android.base.view.BaseActivity
+import com.zhongpin.mvvm_android.bean.LoginEvent
 import com.zhongpin.mvvm_android.bean.TokenExpiredEvent
 import com.zhongpin.mvvm_android.common.login.LoginUtils
-import com.zhongpin.mvvm_android.ui.test.SettingFragment
+import com.zhongpin.mvvm_android.common.utils.Constant
+import com.zhongpin.mvvm_android.common.utils.StatusBarUtil
 import com.zhongpin.mvvm_android.ui.home.HomeFragment
 import com.zhongpin.mvvm_android.ui.me.MineFragment
+import com.zhongpin.mvvm_android.ui.notify.NotifyListFragment
+import com.zhongpin.mvvm_android.ui.order.OrderListFragment
+import com.zhongpin.mvvm_android.ui.test.SettingFragment
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.lang.String
+
 
 //import com.zwb.mvvm_mall.ui.cart.view.CartFragment
 //import com.zwb.mvvm_mall.ui.classify.view.ClassifyFragment
@@ -30,6 +43,7 @@ import org.greenrobot.eventbus.ThreadMode
 //import com.zwb.mvvm_mall.ui.mine.view.MineFragment
 //import kotlinx.android.synthetic.main.activity_main.*
 
+@EventBusRegister
 class MainActivity  : BaseActivity() {
     private var mLastIndex: Int = -1
     private val mFragmentSparseArray = SparseArray<Fragment>()
@@ -38,9 +52,14 @@ class MainActivity  : BaseActivity() {
     private var mLastFragment: Fragment? = null
     private lateinit var binding: ActivityMainBinding;
 
+    private var selectTab = Constant.HOME;
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         StatusBarUtil.immersive(this)
+        if (intent != null) {
+            selectTab = intent.getIntExtra("selectTab",Constant.HOME)
+        }
         super.onCreate(savedInstanceState)
     }
 
@@ -56,6 +75,19 @@ class MainActivity  : BaseActivity() {
         switchFragment(Constant.HOME)
         initBottomNavigation()
         initTabs()
+        if (selectTab != Constant.HOME
+            && selectTab >= 0
+            && selectTab <= Constant.MINE) {
+            mSharedViewModel.viewModelScope.launch {
+                delay(300)
+                val child =  binding.tabs.getChild(selectTab);
+                child?.performClick()
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -63,22 +95,48 @@ class MainActivity  : BaseActivity() {
         if (tokenEvent.isExpired) {
             LoginUtils.clearToken()
             ActivityStackManager.backToSpecifyActivity(MainActivity::class.java)
+            if (selectTab != Constant.HOME) {
+                val homeTab = binding.tabs.getChild(0);
+                homeTab?.performClick()
+            }
             LoginUtils.toLogin(this)
         }
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onLoginSuccess(loginEvent: LoginEvent) {
+        if (loginEvent.isLogin) {
+            if (!NotificationUtils.areNotificationsEnabled()) {
+                requestNotificationPermission()
+            }
+        }
+    }
+
+
     private fun initTabs() {
         val tabs:ArrayList<Tab>  = ArrayList();
-        tabs.add(Tab(this@MainActivity, "首页", R.mipmap.tab_home).setFocusIcon(this, R.mipmap.tab_home_current));            //使用 setFocusIcon(bitmap/drawable/resId) 来添加选中时的第二套图标
-        tabs.add(Tab(this@MainActivity, "订单", R.mipmap.tab_order).setFocusIcon(this, R.mipmap.tab_order_current));            //使用 setFocusIcon(bitmap/drawable/resId) 来添加选中时的第二套图标
-        tabs.add(Tab(this@MainActivity, "通知", R.mipmap.tab_notify).setFocusIcon(this, R.mipmap.tab_notify_current));            //使用 setFocusIcon(bitmap/drawable/resId) 来添加选中时的第二套图标
-        tabs.add(Tab(this@MainActivity, "我的", R.mipmap.tab_my).setFocusIcon(this, R.mipmap.tab_my_current));            //使用 setFocusIcon(bitmap/drawable/resId) 来添加选中时的第二套图标
+        tabs.add(Tab(this@MainActivity, "首页", com.zhongpin.app.R.mipmap.tab_home).setFocusIcon(this, com.zhongpin.app.R.mipmap.tab_home_current));            //使用 setFocusIcon(bitmap/drawable/resId) 来添加选中时的第二套图标
+        tabs.add(Tab(this@MainActivity, "订单", com.zhongpin.app.R.mipmap.tab_order).setFocusIcon(this, com.zhongpin.app.R.mipmap.tab_order_current));            //使用 setFocusIcon(bitmap/drawable/resId) 来添加选中时的第二套图标
+        tabs.add(Tab(this@MainActivity, "通知", com.zhongpin.app.R.mipmap.tab_notify).setFocusIcon(this, com.zhongpin.app.R.mipmap.tab_notify_current));            //使用 setFocusIcon(bitmap/drawable/resId) 来添加选中时的第二套图标
+        tabs.add(Tab(this@MainActivity, "我的", com.zhongpin.app.R.mipmap.tab_my).setFocusIcon(this, com.zhongpin.app.R.mipmap.tab_my_current));            //使用 setFocusIcon(bitmap/drawable/resId) 来添加选中时的第二套图标
         binding.tabs.setTab(tabs)
+
 
         binding.tabs.setOnTabChangeListener(
             object: OnTabChangeListener {
-                override fun onTabChanged(v: View?, index: Int): Boolean {switchFragment(index)
-                  return false;
+                override fun onTabChanged(v: View?, index: Int): Boolean {
+                    if (Constant.NOTIFY == index
+                        || Constant.ORDER == index
+                        || Constant.MINE == index) {
+                        if (!LoginUtils.hasLogin()) {
+                            LoginUtils.toLogin(this@MainActivity);
+                            return true;
+                        }
+                    }
+                    selectTab = index;
+                    switchFragment(index)
+                   return false;
                 }
             }
         )
@@ -93,11 +151,11 @@ class MainActivity  : BaseActivity() {
                     return@setOnNavigationItemSelectedListener true
                 }
                 id.menu_classify -> {
-                    switchFragment(Constant.CLASSIFY)
+                    switchFragment(Constant.ORDER)
                     return@setOnNavigationItemSelectedListener true
                 }
                 id.menu_cart -> {
-                    switchFragment(Constant.CART)
+                    switchFragment(Constant.NOTIFY)
                     return@setOnNavigationItemSelectedListener true
                 }
                 id.menu_mine -> {
@@ -145,8 +203,8 @@ class MainActivity  : BaseActivity() {
         if (fragment == null) {
             when (index) {
                 Constant.HOME -> fragment = HomeFragment.newInstance("home")
-                Constant.CLASSIFY -> fragment = SettingFragment.newInstance("2")
-                Constant.CART -> fragment = SettingFragment.newInstance("3")
+                Constant.ORDER -> fragment = OrderListFragment.newInstance("order")
+                Constant.NOTIFY -> fragment = NotifyListFragment.newInstance("notify")
                 Constant.MINE -> fragment = MineFragment.newInstance("mine")
             }
 
@@ -157,5 +215,15 @@ class MainActivity  : BaseActivity() {
             mFragmentSparseArray.put(index, fragment)
         }
         return fragment!!
+    }
+
+    private fun requestNotificationPermission() {
+        XXPermissions.with(this@MainActivity)
+            .permission(Permission.POST_NOTIFICATIONS)
+            .request(OnPermissionCallback { permissions, allGranted ->
+                if (!allGranted) {
+                    return@OnPermissionCallback
+                }
+            })
     }
 }

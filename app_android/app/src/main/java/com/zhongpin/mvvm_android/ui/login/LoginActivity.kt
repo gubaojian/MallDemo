@@ -20,6 +20,7 @@ import com.zhongpin.lib_base.view.LoadingDialog
 import com.zhongpin.mvvm_android.base.view.BaseVMActivity
 import com.zhongpin.mvvm_android.bean.LoginEvent
 import com.zhongpin.mvvm_android.bean.TokenExpiredEvent
+import com.zhongpin.mvvm_android.biz.utils.RsaUtil
 import com.zhongpin.mvvm_android.common.utils.Constant
 import com.zhongpin.mvvm_android.common.utils.StatusBarUtil
 import com.zhongpin.mvvm_android.ui.find.FindPwdActivity
@@ -175,9 +176,11 @@ class LoginActivity : BaseVMActivity<LoginViewModel>() {
             }
             showLoadingDialog()
 
+            val encryptPassword = RsaUtil.encrypt(mBinding.editPassword.text.trim().toString(), RsaUtil.PUBLIC_KEY);
+
             mViewModel.login(
                 mBinding.editUsername.text.trim().toString(),
-                mBinding.editPassword.text.trim().toString(),
+                encryptPassword ,
                 code
             ).observe(this) {
                 dismissLoadingDialog()

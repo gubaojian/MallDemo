@@ -15,11 +15,9 @@ object Constant {
     //const val BASE_URL = "http://192.168.110.243:81/"
 
 
-
-
     const val HOME = 0
-    const val CLASSIFY = 1
-    const val CART = 2
+    const val ORDER = 1
+    const val NOTIFY = 2
     const val MINE = 3
 
 

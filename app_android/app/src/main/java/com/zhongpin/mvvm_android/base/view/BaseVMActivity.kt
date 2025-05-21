@@ -101,8 +101,8 @@ abstract class BaseVMActivity<VM : BaseViewModel<*>> : BaseActivity(),BaseView {
             it?.let {
                 when {
                     it.code == StateType.SUCCESS -> showSuccess(it.urlKey)
-                    it.code == StateType.ERROR -> showError("网络异常",it.urlKey)
-                    it.code == StateType.NETWORK_ERROR -> showError("网络异常",it.urlKey)
+                    it.code == StateType.ERROR -> showError("网络异常," + it.message,it.urlKey)
+                    it.code == StateType.NETWORK_ERROR -> showError("网络异常," + it.message,it.urlKey)
                     it.code == StateType.EMPTY -> showEmpty(it.urlKey)
                 }
             }

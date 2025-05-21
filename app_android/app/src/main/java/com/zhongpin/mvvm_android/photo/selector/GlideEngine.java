@@ -11,8 +11,8 @@ import com.luck.picture.lib.utils.ActivityCompatHelper;
 import com.zhongpin.app.R;
 
 /**
- * @author：luck
- * @date：2019-11-13 17:02
+ * @author：gubaojian
+ * @date：2025-05-11 17:02
  * @describe：Glide加载引擎
  */
 public class GlideEngine implements ImageEngine {

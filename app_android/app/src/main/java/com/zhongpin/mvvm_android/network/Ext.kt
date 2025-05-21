@@ -9,6 +9,7 @@ import com.zhongpin.mvvm_android.base.viewstate.State
 import com.zhongpin.mvvm_android.base.viewstate.StateType
 import com.zhongpin.mvvm_android.base.vm.BaseViewModel
 import com.zhongpin.mvvm_android.bean.TokenExpiredEvent
+import com.zhongpin.mvvm_android.common.login.LoginUtils
 import kotlinx.coroutines.launch
 
 /**
@@ -58,7 +59,7 @@ fun <T> BaseResponse<T>.showLoadingState(
                     loadState.postValue(State(StateType.EMPTY,urlKey))
                 }
             }
-            loadState.postValue(State(StateType.SUCCESS,urlKey))
+            loadState.postValue(State(StateType.SUCCESS, urlKey))
             this
         }
         else -> {

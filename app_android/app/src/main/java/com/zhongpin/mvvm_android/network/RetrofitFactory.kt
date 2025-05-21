@@ -62,8 +62,7 @@ class RetrofitFactory private constructor() {
         return HttpLoggingInterceptor { message ->
             try {
                 if (message.length < 1024*4) {
-                    val text: String = URLDecoder.decode(message, "utf-8")
-                    LogUtils.e("OKHttp-----", text)
+                    LogUtils.e("OKHttp-----", message)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

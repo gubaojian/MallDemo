@@ -108,8 +108,8 @@ abstract class BaseVMFragment<VM : BaseViewModel<*>> : BaseFragment(),BaseView {
             it?.let {
                 when (it.code) {
                     StateType.SUCCESS -> showSuccess(it.urlKey)
-                    StateType.ERROR -> showError("网络异常",it.urlKey)
-                    StateType.NETWORK_ERROR -> showError("网络异常",it.urlKey)
+                    StateType.ERROR -> showError("网络异常," + it.message,it.urlKey)
+                    StateType.NETWORK_ERROR -> showError("网络异常," + it.message,it.urlKey)
                     StateType.EMPTY -> showEmpty(it.urlKey)
                     else -> showEmpty(it.urlKey)
                 }

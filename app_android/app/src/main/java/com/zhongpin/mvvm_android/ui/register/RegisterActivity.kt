@@ -20,6 +20,7 @@ import com.zhongpin.app.databinding.ActivityRegisterBinding
 import com.zhongpin.lib_base.view.LoadingDialog
 import com.zhongpin.mvvm_android.base.view.BaseVMActivity
 import com.zhongpin.mvvm_android.bean.LoginEvent
+import com.zhongpin.mvvm_android.biz.utils.RsaUtil
 import com.zhongpin.mvvm_android.common.utils.Constant
 import com.zhongpin.mvvm_android.common.utils.StatusBarUtil
 import com.zhongpin.mvvm_android.ui.login.LoginActivity
@@ -173,9 +174,10 @@ class RegisterActivity : BaseVMActivity<RegisterViewModel>() {
                 return
             }
             showLoadingDialog()
+            val encryptPassword = RsaUtil.encrypt(mBinding.editPassword.text.trim().toString(), RsaUtil.PUBLIC_KEY);
             mViewModel.register(
                 mBinding.editUsername.text.trim().toString(),
-                mBinding.editPassword.text.trim().toString(),
+                encryptPassword,
                 mBinding.editVerifyCode.text.trim().toString(),
                 mBinding.editUserNick.text.trim().toString()
             ).observe(this) {
@@ -193,9 +195,10 @@ class RegisterActivity : BaseVMActivity<RegisterViewModel>() {
     }
 
     fun realLogin(){
-         mViewModel.login(
+        val encryptPassword = RsaUtil.encrypt(mBinding.editPassword.text.trim().toString(), RsaUtil.PUBLIC_KEY);
+        mViewModel.login(
             mBinding.editUsername.text.trim().toString(),
-            mBinding.editPassword.text.trim().toString(),
+            encryptPassword,
             ""
         ).observe(this) {
             dismissLoadingDialog()

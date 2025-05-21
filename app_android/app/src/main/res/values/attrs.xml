@@ -28,4 +28,9 @@
         <attr name="unreadBackground" format="reference"/>
     </declare-styleable>
 
+    <declare-styleable name="AspectRatioLayout">
+        <attr name="arl_widthRatio" format="float" />
+        <attr name="arl_heightRatio" format="float" />
+    </declare-styleable>
+
 </resources>

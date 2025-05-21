@@ -47,6 +47,7 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         release {
@@ -221,4 +222,11 @@ dependencies {
 
     //https://github.com/hdodenhof/CircleImageView
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    implementation 'com.kyleduo.switchbutton:library:2.1.0'
+
+    implementation 'org.java-websocket:Java-WebSocket:1.6.0'
+
+    implementation 'com.github.vipulasri:timelineview:1.2.2'
+
 }

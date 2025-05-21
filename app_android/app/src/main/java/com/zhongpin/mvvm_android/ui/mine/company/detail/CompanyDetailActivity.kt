@@ -22,10 +22,11 @@ import com.zhongpin.mvvm_android.bean.CompanyInfoChangeEvent
 import com.zhongpin.mvvm_android.bean.CompanyListItemResponse
 import com.zhongpin.mvvm_android.common.utils.StatusBarUtil
 import com.zhongpin.mvvm_android.network.ApiService
-import com.zhongpin.mvvm_android.ui.common.CompanyTypes
+import com.zhongpin.mvvm_android.ui.common.CompanyConfigData
 import com.zhongpin.mvvm_android.ui.mine.company.edit.EditCompanyVerifyActivity
-import com.zhongpin.mvvm_android.ui.mine.company.shouhuo.AddressListActivity
+import com.zhongpin.mvvm_android.ui.mine.company.dizhi.AddressListActivity
 import com.zhongpin.mvvm_android.ui.photo.preview.PhonePreviewerActivity
+import com.zhongpin.mvvm_android.ui.utils.IntentUtils
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
@@ -44,7 +45,7 @@ class CompanyDetailActivity : BaseVMActivity<CompanyDetailViewModel>() {
         // 键盘view整体上移，暂时不用沉浸式导航栏
         StatusBarUtil.immersive(this)
         if (intent != null) {
-            companyListItem = intent.getSerializableExtra("companyListItem", CompanyListItemResponse::class.java)
+            companyListItem = IntentUtils.getSerializableExtra(intent, "companyListItem", CompanyListItemResponse::class.java)
         }
         super.onCreate(savedInstanceState)
     }
@@ -57,6 +58,9 @@ class CompanyDetailActivity : BaseVMActivity<CompanyDetailViewModel>() {
     }
 
     override fun initView() {
+        mViewModel.loadState.observe(this, {
+            dismissLoadingDialog()
+        })
         super.initView()
         StatusBarUtil.setMargin(this, mBinding.content)
         mBinding.ivBack.setOnClickListener { finish() }
@@ -126,20 +130,22 @@ class CompanyDetailActivity : BaseVMActivity<CompanyDetailViewModel>() {
                 mBinding.bankContainer.tag = true
             }
         }
-        registerDefaultLoad(mBinding.loadContainer, ApiService.USER_AUTH_INFO)
+        mBinding.companyType.text = CompanyConfigData.getCompanyType(item.entType ?: -1)
+        //registerDefaultLoad(mBinding.loadContainer, ApiService.USER_AUTH_INFO)
     }
 
     override fun initDataObserver() {
         super.initDataObserver()
+        /**
         mViewModel.mUserAuthInfoData.observe(this) {
             showSuccess(ApiService.USER_AUTH_INFO)
-            mBinding.companyType.text = CompanyTypes.getCompanyType(it.data?.entType ?: -1)
-        }
+            mBinding.companyType.text = CompanyConfigData.getCompanyType(it.data?.entType ?: -1)
+        }*/
     }
 
     override fun initData() {
         super.initData()
-        mViewModel.getUserAuthInfoData()
+        //mViewModel.getUserAuthInfoData()
     }
 
 

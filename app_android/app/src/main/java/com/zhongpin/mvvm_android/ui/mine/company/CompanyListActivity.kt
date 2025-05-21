@@ -100,6 +100,8 @@ class CompanyListActivity : BaseVMActivity<CompanyListViewModel>() {
                    mDatas.addAll(records)
                 }
                 listAdapter.notifyDataSetChanged()
+            } else {
+                showError(it.msg ?: "", ApiService.COMPANY_LIST)
             }
             mBinding.refreshLayout.finishRefresh()
         }
@@ -135,6 +137,5 @@ class CompanyListActivity : BaseVMActivity<CompanyListViewModel>() {
     override fun onDestroy() {
         super.onDestroy()
     }
-
 
 }

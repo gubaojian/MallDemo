@@ -75,6 +75,9 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
     }
 
     override fun initView() {
+        mViewModel.loadState.observe(this, {
+            dismissLoadingDialog()
+        })
         super.initView()
         //StatusBarUtil.setMargin(this, mBinding.content)
         mLoadingDialog = LoadingDialog(this, false)
@@ -336,7 +339,14 @@ class CompanyVerifyActivity : BaseVMActivity<CompanyVerifyViewModel>(), OnAddres
         receiveAddress["province"] = mProvince?.name
         receiveAddress["city"] = mCity?.name
         receiveAddress["region"] = mCounty?.name
-        parameter["receiveAddressList"] = arrayOf(receiveAddress);
+        if (mProvince != null
+            && mCity != null
+            && mCounty != null
+            && !TextUtils.isEmpty(mBinding.editShouHuoDetail.text.trim().toString())) {
+            parameter["receiveAddressList"] = arrayOf(receiveAddress);
+        } else {
+            parameter["receiveAddressList"] = emptyArray<Any?>();
+        }
 
         mViewModel.submitEntInfoAuth(parameter).observe(this) {
             dismissLoadingDialog()

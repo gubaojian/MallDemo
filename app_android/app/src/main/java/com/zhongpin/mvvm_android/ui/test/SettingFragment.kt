@@ -87,7 +87,7 @@ class SettingFragment : BaseVMFragment<SettingViewModel>() {
     }
 
     private fun setBannerData(list: List<UserInfoResponse>) {
-        binding.text.setText("" + list.toString() + " \n " +   param1 )
+        //binding.text.setText("" + list.toString() + " \n " +   param1 )
         //mHeaderView.mBanner.adapter = BannerImageAdapter(list)
         //mHeaderView.mBanner.addBannerLifecycleObserver(this)
         //mHeaderView.mBanner.indicator = CircleIndicator(activity)

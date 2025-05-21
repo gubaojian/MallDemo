@@ -15,6 +15,7 @@ data class CompanyListItemResponse(var id : Long,
                                    var bankAccount:String?,
                                    var bankName:String?,
                                    var describe:String?,
+                                   var entType:Int = 0,
                                    var handStatus:Int,
                                    var status:Int):java.io.Serializable {
     companion object {
