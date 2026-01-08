@@ -27,5 +27,8 @@
             </intent-filter>
         </activity>
     </application>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- 可选：声明相机功能（过滤应用市场） -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
 </manifest>
