@@ -6,8 +6,7 @@ enum class StateType {
     SUCCESS,
     ERROR,
     EMPTY,
-    NETWORK_ERROR,
-    TIP
+    NETWORK_ERROR
 }
 
 data class State(
